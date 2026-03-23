@@ -23,10 +23,6 @@ const stats = [
   { value: "10+", label: "Tools Mastered" },
 ];
 
-const floatingTags = [
-  "Maya", "Blender", "Houdini", "Substance Painter",
-  "Unreal Engine", "After Effects", "Cloth Sim", "Grooming",
-];
 
 export default function About() {
   const sectionRef = useRef<HTMLElement>(null);
