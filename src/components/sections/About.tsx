@@ -70,19 +70,7 @@ export default function About() {
         },
       });
 
-      // Floating tags parallax
-      gsap.utils.toArray<HTMLElement>(".floating-tag").forEach((tag, i) => {
-        gsap.to(tag, {
-          y: (i % 2 === 0 ? -30 : 30) * (1 + i * 0.2),
-          ease: "none",
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: "top bottom",
-            end: "bottom top",
-            scrub: 1.5,
-          },
-        });
-      });
+      // Floating tags removed - were decorative but looked distracting
     }, sectionRef);
 
     return () => ctx.revert();
@@ -94,23 +82,6 @@ export default function About() {
       id="about"
       className="relative py-24 md:py-40 px-6 md:px-12 overflow-hidden"
     >
-      {/* Floating Tags (decorative) */}
-      <div className="absolute inset-0 pointer-events-none hidden lg:block">
-        {floatingTags.map((tag, i) => (
-          <span
-            key={tag}
-            className="floating-tag absolute font-body text-xs text-white/8 tracking-widest uppercase select-none"
-            style={{
-              top: `${15 + (i * 11) % 70}%`,
-              left: `${5 + (i * 17) % 90}%`,
-              fontSize: `${10 + (i % 3) * 4}px`,
-            }}
-          >
-            {tag}
-          </span>
-        ))}
-      </div>
-
       <div className="max-w-7xl mx-auto">
         {/* Section Label */}
         <div className="mb-16">
