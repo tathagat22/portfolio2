@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx create-next-app@14 . --typescript --tailwind --eslint --app --src-dir --import-alias \"@/*\" --no-turbo)",
+      "Read(//d/kautilya/portfolio2-app/**)",
+      "Bash(cp -r src/ \"D:/kautilya/portfolio2/\")",
+      "Bash(cp package.json tsconfig.json next.config.mjs tailwind.config.ts postcss.config.mjs next-env.d.ts .gitignore .eslintrc.json \"D:/kautilya/portfolio2/\")",
+      "Bash(npm install:*)",
+      "Bash(cd:*)",
+      "Bash(npx next:*)"
+    ]
+  }
+}
