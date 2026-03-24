@@ -18,10 +18,20 @@ export default function Preloader({ onComplete }: PreloaderProps) {
     if (tlRef.current) tlRef.current.kill();
     const el = containerRef.current;
     if (el) el.style.display = "none";
+    // Mark as shown for this session
+    try { sessionStorage.setItem("preloader-shown", "1"); } catch {}
     onComplete();
   }, [onComplete]);
 
   useEffect(() => {
+    // Skip preloader if already shown this session (back nav, page refresh)
+    try {
+      if (sessionStorage.getItem("preloader-shown")) {
+        finish();
+        return;
+      }
+    } catch {}
+
     const container = containerRef.current;
     if (!container) {
       finish();
@@ -66,7 +76,6 @@ export default function Preloader({ onComplete }: PreloaderProps) {
 
     tl.to(bg, { yPercent: -100, duration: 0.8, ease: "power4.inOut" });
 
-    // Safety: force complete after 4 seconds no matter what
     const timeout = setTimeout(finish, 4000);
 
     return () => {

@@ -11,6 +11,7 @@ import Skills from "@/components/sections/Skills";
 import Contact from "@/components/sections/Contact";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
+import SectionDivider from "@/components/ui/SectionDivider";
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
@@ -23,11 +24,17 @@ export default function Home() {
 
       <main>
         <Hero />
+        <SectionDivider variant="particles" color="cyan" />
         <Showreel />
+        <SectionDivider variant="line" color="cyan" />
         <About />
+        <SectionDivider variant="particles" color="amber" />
         <WorkGrid />
+        <SectionDivider variant="line" color="amber" />
         <Experience />
+        <SectionDivider variant="particles" color="cyan" />
         <Skills />
+        <SectionDivider variant="line" color="purple" />
         <Contact />
       </main>
 

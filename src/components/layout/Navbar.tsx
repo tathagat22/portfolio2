@@ -9,8 +9,12 @@ import MobileMenu from "./MobileMenu";
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const [isFirstVisit, setIsFirstVisit] = useState(true);
 
   useEffect(() => {
+    try {
+      if (sessionStorage.getItem("preloader-shown")) setIsFirstVisit(false);
+    } catch {}
     const onScroll = () => setIsScrolled(window.scrollY > 100);
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
@@ -21,7 +25,7 @@ export default function Navbar() {
       <motion.nav
         initial={{ y: -100 }}
         animate={{ y: 0 }}
-        transition={{ duration: 0.8, delay: 2.8, ease: [0.22, 1, 0.36, 1] }}
+        transition={{ duration: 0.8, delay: isFirstVisit ? 2.8 : 0, ease: [0.22, 1, 0.36, 1] }}
         className={cn(
           "fixed top-0 left-0 right-0 z-[100] px-6 md:px-12 py-5 flex items-center justify-between transition-all duration-500",
           isScrolled && "bg-[#0a0a0a]/80 backdrop-blur-md"
