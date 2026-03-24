@@ -4,7 +4,6 @@ import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import dynamic from "next/dynamic";
-import HeadingAccent from "@/components/ui/HeadingAccent";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -81,18 +80,15 @@ export default function About() {
     >
       <div className="max-w-7xl mx-auto">
         {/* Section Label */}
-        <div className="mb-16 flex items-start gap-4">
-          <HeadingAccent variant="sphere" size={70} className="hidden md:flex mt-2 flex-shrink-0" />
-          <div>
-            <p className="font-body text-sm text-text-secondary tracking-[0.3em] uppercase mb-3">
-              About
-            </p>
-            <h2 className="font-display text-4xl md:text-6xl lg:text-7xl font-bold text-white">
-              Crafting Digital
-              <br />
-              <span className="text-[var(--accent-cyan)]">Realities</span>
-            </h2>
-          </div>
+        <div className="mb-16">
+          <p className="font-body text-sm text-text-secondary tracking-[0.3em] uppercase mb-3">
+            About
+          </p>
+          <h2 className="font-display text-4xl md:text-6xl lg:text-7xl font-bold text-white">
+            Crafting Digital
+            <br />
+            <span className="text-[var(--accent-cyan)]">Realities</span>
+          </h2>
         </div>
 
         {/* Split Layout */}

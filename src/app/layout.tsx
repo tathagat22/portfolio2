@@ -4,6 +4,7 @@ import "./globals.css";
 import LenisProvider from "@/components/providers/LenisProvider";
 import NoiseOverlay from "@/components/layout/NoiseOverlay";
 import CustomCursor from "@/components/layout/CustomCursor";
+import ScrollVine from "@/components/ui/ScrollVine";
 
 const clashDisplay = localFont({
   src: "./fonts/GeistVF.woff",
@@ -38,6 +39,7 @@ export default function RootLayout({
         <LenisProvider>
           <CustomCursor />
           <NoiseOverlay />
+          <ScrollVine />
           {children}
         </LenisProvider>
       </body>

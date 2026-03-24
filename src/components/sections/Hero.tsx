@@ -3,8 +3,6 @@
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import ScrollLottie from "@/components/ui/ScrollLottie";
-
 gsap.registerPlugin(ScrollTrigger);
 
 export default function Hero() {
@@ -160,20 +158,6 @@ export default function Hero() {
       {/* Dark overlays for text readability */}
       <div className="absolute inset-0 z-[1] bg-black/40" />
       <div className="absolute inset-0 z-[1] bg-gradient-to-t from-[#0a0a0a] via-transparent to-[#0a0a0a]/60" />
-
-      {/* Floating wireframe accents */}
-      <ScrollLottie
-        animationPath="/animations/wireframe-cube.json"
-        className="absolute top-[12%] right-[8%] w-[180px] h-[180px] z-[2] opacity-50 pointer-events-none hidden md:block"
-      />
-      <ScrollLottie
-        animationPath="/animations/wireframe-sphere.json"
-        className="absolute bottom-[18%] left-[6%] w-[150px] h-[150px] z-[2] opacity-40 pointer-events-none hidden md:block"
-      />
-      <ScrollLottie
-        animationPath="/animations/particle-network.json"
-        className="absolute top-[55%] right-[3%] w-[350px] h-[180px] z-[2] opacity-50 pointer-events-none hidden lg:block"
-      />
 
       {/* Subtle grid pattern overlay */}
       <div

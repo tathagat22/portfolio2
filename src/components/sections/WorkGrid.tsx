@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import gsap from "gsap";
-import HeadingAccent from "@/components/ui/HeadingAccent";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { PROJECTS_DATA, CATEGORIES } from "@/lib/utils/constants";
 import BentoCard from "@/components/ui/BentoCard";
@@ -58,18 +57,15 @@ export default function WorkGrid() {
     >
       <div className="max-w-7xl mx-auto">
         {/* Section Header */}
-        <div className="work-heading mb-16 flex items-start gap-4">
-          <HeadingAccent variant="cube" size={80} className="hidden md:flex mt-2 flex-shrink-0" />
-          <div>
-            <p className="font-body text-sm text-text-secondary tracking-[0.3em] uppercase mb-3">
-              Portfolio
-            </p>
-            <h2 className="font-display text-4xl md:text-6xl lg:text-8xl font-bold text-white">
-              SELECTED
-              <br />
-              <span className="text-[var(--accent-amber)]">WORK</span>
-            </h2>
-          </div>
+        <div className="work-heading mb-16">
+          <p className="font-body text-sm text-text-secondary tracking-[0.3em] uppercase mb-3">
+            Portfolio
+          </p>
+          <h2 className="font-display text-4xl md:text-6xl lg:text-8xl font-bold text-white">
+            SELECTED
+            <br />
+            <span className="text-[var(--accent-amber)]">WORK</span>
+          </h2>
         </div>
 
         {/* Category Filters */}

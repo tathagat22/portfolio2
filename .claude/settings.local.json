@@ -7,7 +7,25 @@
       "Bash(cp package.json tsconfig.json next.config.mjs tailwind.config.ts postcss.config.mjs next-env.d.ts .gitignore .eslintrc.json \"D:/kautilya/portfolio2/\")",
       "Bash(npm install:*)",
       "Bash(cd:*)",
-      "Bash(npx next:*)"
+      "Bash(npx next:*)",
+      "WebSearch",
+      "WebFetch(domain:lottiefiles.com)",
+      "WebFetch(domain:lottie.host)",
+      "WebFetch(domain:iconscout.com)",
+      "WebFetch(domain:assets2.lottiefiles.com)",
+      "WebFetch(domain:codepen.io)",
+      "WebFetch(domain:assets4.lottiefiles.com)",
+      "WebFetch(domain:vue3-lottie.vercel.app)",
+      "WebFetch(domain:help.webflow.com)",
+      "WebFetch(domain:developers.lottiefiles.com)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:lottiefiles.github.io)",
+      "WebFetch(domain:creattie.com)",
+      "WebFetch(domain:www.dreamhost.com)",
+      "WebFetch(domain:deuexsolutions.com)",
+      "WebFetch(domain:dev.to)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(curl -sL https://raw.githubusercontent.com/LottieFiles/dotlottie-web/main/apps/dotlottie-web-example/src/main.ts)"
     ]
   }
 }

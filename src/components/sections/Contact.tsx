@@ -5,7 +5,6 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { motion } from "framer-motion";
 import { SOCIAL_LINKS } from "@/lib/utils/constants";
-import ScrollLottie from "@/components/ui/ScrollLottie";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -68,20 +67,6 @@ export default function Contact() {
     >
       {/* Background glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full bg-[var(--accent-purple)]/5 blur-[150px] pointer-events-none" />
-
-      {/* Floating particle animations */}
-      <ScrollLottie
-        animationPath="/animations/particle-network.json"
-        className="absolute top-16 right-8 w-[400px] h-[200px] opacity-60 pointer-events-none hidden lg:block"
-      />
-      <ScrollLottie
-        animationPath="/animations/wireframe-sphere.json"
-        className="absolute bottom-16 left-8 w-[180px] h-[180px] opacity-50 pointer-events-none hidden lg:block"
-      />
-      <ScrollLottie
-        animationPath="/animations/wireframe-cube.json"
-        className="absolute top-1/2 right-[15%] w-[140px] h-[140px] opacity-30 pointer-events-none hidden xl:block"
-      />
 
       <div className="max-w-7xl mx-auto relative z-10">
         {/* Big CTA Heading */}
