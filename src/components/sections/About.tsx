@@ -115,13 +115,12 @@ export default function About() {
 
             {/* CTA */}
             <a
-              href="/Kautilya_Resume___2026.pdf"
-              target="_blank"
+              href="#resume"
               className="inline-flex items-center gap-3 font-body text-sm px-6 py-3 border border-[var(--accent-cyan)]/30 rounded-full text-[var(--accent-cyan)] hover:bg-[var(--accent-cyan)]/10 transition-all duration-300 tracking-wider uppercase"
             >
-              Download Resume
+              View Resume
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                <path d="M8 2v9m0 0l-3-3m3 3l3-3M3 13h10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M3 8h10m0 0L9 4m4 4L9 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </a>
           </div>

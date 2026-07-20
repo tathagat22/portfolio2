@@ -137,14 +137,13 @@ export default function Hero() {
           muted
           playsInline
           className="absolute inset-0 w-full h-full object-cover"
-          poster=""
+          poster="/images/work/dark-forest/cover.webp"
         >
-          {/* Add your video source here later */}
-          {/* <source src="/videos/showreel.mp4" type="video/mp4" /> */}
+          <source src="/videos/hero/universe.mp4" type="video/mp4" />
         </video>
 
-        {/* Fallback gradient when no video */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#050510] via-[#0a1628] to-[#0a0a0a]" />
+        {/* Fallback gradient (shows briefly before the video paints) */}
+        <div className="absolute inset-0 -z-10 bg-gradient-to-b from-[#050510] via-[#0a1628] to-[#0a0a0a]" />
 
         {/* Animated ambient orbs */}
         <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] rounded-full bg-[#00f0ff]/[0.04] blur-[150px]"

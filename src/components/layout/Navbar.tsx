@@ -4,12 +4,14 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { NAV_LINKS } from "@/lib/utils/constants";
 import { cn } from "@/lib/utils/cn";
+import Button from "@/components/ui/Button";
 import MobileMenu from "./MobileMenu";
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [isFirstVisit, setIsFirstVisit] = useState(true);
+  const [activeSection, setActiveSection] = useState<string>("");
 
   useEffect(() => {
     try {
@@ -18,6 +20,25 @@ export default function Navbar() {
     const onScroll = () => setIsScrolled(window.scrollY > 100);
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  useEffect(() => {
+    const sections = NAV_LINKS.map((link) => document.getElementById(link.href.slice(1))).filter(
+      (el): el is HTMLElement => Boolean(el)
+    );
+    if (!sections.length) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) setActiveSection(entry.target.id);
+        });
+      },
+      { rootMargin: "-45% 0px -45% 0px", threshold: 0 }
+    );
+
+    sections.forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
   }, []);
 
   return (
@@ -38,21 +59,31 @@ export default function Navbar() {
 
         {/* Desktop Nav */}
         <div className="hidden md:flex items-center gap-8">
-          {NAV_LINKS.map((link) => (
-            <a
-              key={link.label}
-              href={link.href}
-              className="font-body text-sm text-text-secondary hover:text-white transition-colors duration-300 uppercase tracking-widest"
-            >
-              {link.label}
-            </a>
-          ))}
-          <a
-            href="#contact"
-            className="font-body text-sm px-5 py-2.5 border border-white/20 rounded-full text-white hover:bg-white hover:text-black transition-all duration-300 uppercase tracking-widest"
-          >
+          {NAV_LINKS.map((link) => {
+            const isActive = activeSection === link.href.slice(1);
+            return (
+              <a
+                key={link.label}
+                href={link.href}
+                className={cn(
+                  "relative font-body text-sm transition-colors duration-300 uppercase tracking-widest pb-1",
+                  isActive ? "text-white" : "text-text-secondary hover:text-white"
+                )}
+              >
+                {link.label}
+                {isActive && (
+                  <motion.span
+                    layoutId="nav-active-indicator"
+                    className="absolute -bottom-0 left-0 right-0 h-[1px] bg-[var(--accent-cyan)]"
+                    transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                  />
+                )}
+              </a>
+            );
+          })}
+          <Button href="#contact" variant="outline" className="!px-5 !py-2.5">
             Let&apos;s Talk
-          </a>
+          </Button>
         </div>
 
         {/* Mobile Hamburger */}

@@ -1,160 +1,161 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import type { IconType } from "react-icons";
+import { SiAutodeskmaya, SiBlender, SiUnrealengine, SiAutocad } from "react-icons/si";
+import { SKILLS_DATA, SKILL_CATEGORIES } from "@/lib/utils/constants";
 
-const SKILL_ICONS: Record<string, string> = {
-  "Autodesk Maya": "M",
-  "Blender": "B",
-  "Houdini": "H",
-  "3ds Max": "3D",
-  "AutoCAD": "AC",
-  "Substance Painter": "SP",
-  "Mudbox": "MB",
-  "Adobe After Effects": "AE",
-  "Adobe Photoshop": "PS",
-  "Unreal Engine": "UE",
+gsap.registerPlugin(ScrollTrigger);
+
+// Real brand icons where one reliably exists; everything else falls back to a
+// styled monogram so the grid still reads as one consistent icon language.
+const SKILL_ICONS: Record<string, IconType> = {
+  maya: SiAutodeskmaya,
+  blender: SiBlender,
+  unreal: SiUnrealengine,
+  autocad: SiAutocad,
 };
 
-const SKILLS = [
-  { name: "Autodesk Maya", category: "3D & Modeling", proficiency: 5 },
-  { name: "Blender", category: "3D & Modeling", proficiency: 4 },
-  { name: "Houdini", category: "3D & Modeling", proficiency: 3 },
-  { name: "3ds Max", category: "3D & Modeling", proficiency: 3 },
-  { name: "AutoCAD", category: "3D & Modeling", proficiency: 3 },
-  { name: "Substance Painter", category: "Texturing", proficiency: 5 },
-  { name: "Mudbox", category: "Texturing", proficiency: 3 },
-  { name: "Adobe After Effects", category: "Compositing", proficiency: 4 },
-  { name: "Adobe Photoshop", category: "Compositing", proficiency: 4 },
-  { name: "Unreal Engine", category: "Game Engines", proficiency: 3 },
-];
+const SKILL_MONOGRAMS: Record<string, string> = {
+  "substance-painter": "SP",
+  "after-effects": "AE",
+  premiere: "PR",
+  photoshop: "PS",
+  illustrator: "AI",
+  chatgpt: "GPT",
+  midjourney: "MJ",
+  runway: "RW",
+  kling: "KL",
+  pika: "PK",
+  veo: "VO",
+  firefly: "FF",
+};
 
-const CATEGORIES = ["3D & Modeling", "Texturing", "Compositing", "Game Engines"];
+const RING_SIZE = 64;
+const RING_STROKE = 3;
+const RING_RADIUS = (RING_SIZE - RING_STROKE) / 2;
+const RING_CIRCUMFERENCE = 2 * Math.PI * RING_RADIUS;
+
+function SkillRing({ proficiency }: { proficiency: number }) {
+  const offset = RING_CIRCUMFERENCE * (1 - proficiency / 5);
+  return (
+    <svg
+      width={RING_SIZE}
+      height={RING_SIZE}
+      viewBox={`0 0 ${RING_SIZE} ${RING_SIZE}`}
+      className="absolute inset-0 -rotate-90"
+    >
+      <circle
+        cx={RING_SIZE / 2}
+        cy={RING_SIZE / 2}
+        r={RING_RADIUS}
+        fill="none"
+        stroke="rgba(255,255,255,0.08)"
+        strokeWidth={RING_STROKE}
+      />
+      <circle
+        cx={RING_SIZE / 2}
+        cy={RING_SIZE / 2}
+        r={RING_RADIUS}
+        fill="none"
+        stroke="var(--section-accent)"
+        strokeWidth={RING_STROKE}
+        strokeLinecap="round"
+        strokeDasharray={RING_CIRCUMFERENCE}
+        strokeDashoffset={offset}
+        className="transition-all duration-700 ease-out"
+      />
+    </svg>
+  );
+}
 
 export default function Skills() {
-  const [hoveredSkill, setHoveredSkill] = useState<string | null>(null);
+  const sectionRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.from(".skills-heading", {
+        y: 60,
+        opacity: 0,
+        duration: 1,
+        ease: "power3.out",
+        scrollTrigger: { trigger: sectionRef.current, start: "top 70%" },
+      });
+
+      gsap.from(".skill-card", {
+        y: 40,
+        opacity: 0,
+        stagger: 0.04,
+        duration: 0.7,
+        ease: "power3.out",
+        scrollTrigger: { trigger: sectionRef.current, start: "top 55%" },
+      });
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
 
   return (
-    <section id="skills" className="relative py-24 md:py-40 px-6 md:px-12">
+    <section ref={sectionRef} id="skills" data-theme="skills" className="relative py-24 md:py-40 px-6 md:px-12">
       <div className="max-w-7xl mx-auto">
-        {/* Section Header */}
-        <div className="mb-20">
-          <p className="font-body text-sm text-[#888] tracking-[0.3em] uppercase mb-3">
-            Toolkit
-          </p>
+        <div className="skills-heading mb-20">
+          <p className="font-body text-sm text-text-secondary tracking-[0.3em] uppercase mb-3">Toolkit</p>
           <h2 className="font-display text-4xl md:text-6xl lg:text-7xl font-bold text-white leading-tight">
             Skills &amp;
             <br />
-            <span style={{ color: "#00f0ff" }}>Tools</span>
+            <span className="text-[var(--section-accent)]">Tools</span>
           </h2>
         </div>
 
-        {/* Skills by Category */}
-        <div style={{ display: "flex", flexDirection: "column", gap: "64px" }}>
-          {CATEGORIES.map((category) => {
-            const skillsInCategory = SKILLS.filter((s) => s.category === category);
+        <div className="flex flex-col gap-16">
+          {SKILL_CATEGORIES.map((category) => {
+            const skillsInCategory = SKILLS_DATA.filter((s) => s.category === category);
             return (
               <div key={category}>
-                {/* Category Header */}
-                <div style={{ display: "flex", alignItems: "center", gap: "16px", marginBottom: "32px" }}>
-                  <h3 className="font-body" style={{ fontSize: "11px", color: "#555", letterSpacing: "0.3em", textTransform: "uppercase", whiteSpace: "nowrap" }}>
+                <div className="flex items-center gap-4 mb-8">
+                  <h3 className="font-body text-[11px] text-text-tertiary tracking-[0.3em] uppercase whitespace-nowrap">
                     {category}
                   </h3>
-                  <div style={{ height: "1px", flex: 1, background: "rgba(255,255,255,0.1)" }} />
+                  <div className="h-px flex-1 bg-white/10" />
                 </div>
 
-                {/* Cards Grid */}
-                <div style={{
-                  display: "grid",
-                  gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))",
-                  gap: "16px",
-                }}>
-                  {skillsInCategory.map((skill) => {
-                    const isHovered = hoveredSkill === skill.name;
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+                  {skillsInCategory.map((skill, i) => {
+                    const Icon = SKILL_ICONS[skill.icon];
+                    const monogram = SKILL_MONOGRAMS[skill.icon] ?? skill.name.charAt(0);
+
                     return (
                       <div
                         key={skill.name}
-                        onMouseEnter={() => setHoveredSkill(skill.name)}
-                        onMouseLeave={() => setHoveredSkill(null)}
-                        style={{
-                          background: isHovered ? "rgba(0, 240, 255, 0.06)" : "rgba(255, 255, 255, 0.03)",
-                          border: isHovered ? "1px solid rgba(0, 240, 255, 0.2)" : "1px solid rgba(255, 255, 255, 0.06)",
-                          borderRadius: "12px",
-                          padding: "20px",
-                          cursor: "default",
-                          transition: "all 0.4s ease",
-                          transform: isHovered ? "translateY(-4px)" : "translateY(0)",
-                          boxShadow: isHovered ? "0 20px 40px rgba(0, 240, 255, 0.08)" : "none",
-                          position: "relative",
-                          overflow: "hidden",
-                        }}
+                        className="skill-card group relative rounded-2xl border border-white/[0.06] bg-white/[0.03] p-5 transition-all duration-400 hover:-translate-y-1 hover:border-[var(--section-accent)]/30 hover:bg-[var(--section-accent)]/[0.06] hover:shadow-[0_20px_40px_rgba(255,255,255,0.06)]"
                       >
-                        {/* Icon */}
-                        <div style={{
-                          width: "48px",
-                          height: "48px",
-                          borderRadius: "8px",
-                          background: isHovered ? "rgba(0, 240, 255, 0.15)" : "rgba(255, 255, 255, 0.05)",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          marginBottom: "16px",
-                          transition: "all 0.4s ease",
-                        }}>
-                          <span className="font-display" style={{
-                            fontSize: "14px",
-                            fontWeight: "bold",
-                            color: isHovered ? "#00f0ff" : "rgba(255,255,255,0.4)",
-                            transition: "color 0.4s ease",
-                          }}>
-                            {SKILL_ICONS[skill.name] || skill.name.charAt(0)}
-                          </span>
+                        <div
+                          className="relative mb-4"
+                          style={{ width: RING_SIZE, height: RING_SIZE, animation: `float-y 4s ease-in-out infinite`, animationDelay: `${i * 0.15}s` }}
+                        >
+                          <SkillRing proficiency={skill.proficiency} />
+                          <div className="absolute inset-[10px] rounded-full bg-white/5 flex items-center justify-center transition-colors duration-400 group-hover:bg-[var(--section-accent)]/15">
+                            {Icon ? (
+                              <Icon className="w-5 h-5 text-white/50 transition-colors duration-400 group-hover:text-[var(--section-accent)]" />
+                            ) : (
+                              <span className="font-display text-[11px] font-bold text-white/50 transition-colors duration-400 group-hover:text-[var(--section-accent)]">
+                                {monogram}
+                              </span>
+                            )}
+                          </div>
                         </div>
 
-                        {/* Name */}
-                        <p className="font-body" style={{
-                          fontSize: "14px",
-                          color: "#fff",
-                          fontWeight: 500,
-                          marginBottom: "16px",
-                          lineHeight: 1.3,
-                        }}>
+                        <p className="font-body text-sm text-white font-medium mb-3 leading-snug">
                           {skill.name}
                         </p>
 
-                        {/* Proficiency Bar */}
-                        <div style={{
-                          width: "100%",
-                          height: "6px",
-                          background: "rgba(255,255,255,0.1)",
-                          borderRadius: "99px",
-                          overflow: "hidden",
-                        }}>
-                          <div style={{
-                            width: `${(skill.proficiency / 5) * 100}%`,
-                            height: "100%",
-                            borderRadius: "99px",
-                            background: isHovered
-                              ? "linear-gradient(90deg, #00f0ff, #8b5cf6)"
-                              : "linear-gradient(90deg, #00f0ff, rgba(0,240,255,0.4))",
-                            transition: "all 0.6s ease",
-                          }} />
-                        </div>
-
-                        {/* Label */}
-                        <div style={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                          marginTop: "8px",
-                        }}>
-                          <span className="font-body" style={{ fontSize: "10px", color: "#555", textTransform: "uppercase", letterSpacing: "0.1em" }}>
+                        <div className="flex items-center justify-between">
+                          <span className="font-body text-[10px] text-text-tertiary uppercase tracking-[0.1em]">
                             Proficiency
                           </span>
-                          <span className="font-body" style={{
-                            fontSize: "10px",
-                            fontWeight: 500,
-                            color: isHovered ? "#00f0ff" : "#888",
-                            transition: "color 0.4s ease",
-                          }}>
+                          <span className="font-body text-[10px] font-medium text-text-secondary transition-colors duration-400 group-hover:text-[var(--section-accent)]">
                             {skill.proficiency}/5
                           </span>
                         </div>

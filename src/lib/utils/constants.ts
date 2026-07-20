@@ -5,6 +5,7 @@ export const SECTION_IDS = {
   work: "work",
   experience: "experience",
   skills: "skills",
+  resume: "resume",
   contact: "contact",
 } as const;
 
@@ -12,15 +13,29 @@ export const NAV_LINKS = [
   { label: "Work", href: `#${SECTION_IDS.work}` },
   { label: "About", href: `#${SECTION_IDS.about}` },
   { label: "Experience", href: `#${SECTION_IDS.experience}` },
+  { label: "Resume", href: `#${SECTION_IDS.resume}` },
   { label: "Contact", href: `#${SECTION_IDS.contact}` },
 ] as const;
 
+export const CONTACT_INFO = {
+  email: "forgeinpixel@gmail.com",
+  phone: "+91 9162399055",
+} as const;
+
+// TODO: replace with real handles once the client supplies them
 export const SOCIAL_LINKS = {
   linkedin: "https://linkedin.com/in/kautilya-yashovardhan",
   artstation: "https://artstation.com/kautilya",
   instagram: "https://instagram.com/kautilya",
-  email: "mailto:kautilya1011@gmail.com",
+  behance: "#",
+  github: "#",
+  email: `mailto:${CONTACT_INFO.email}`,
 } as const;
+
+function projectImages(slug: string, count: number): string[] {
+  const names = ["cover", ...Array.from({ length: count - 1 }, (_, i) => String(i + 2))];
+  return names.map((n) => `/images/work/${slug}/${n}.webp`);
+}
 
 export const PROJECTS_DATA = [
   {
@@ -28,7 +43,9 @@ export const PROJECTS_DATA = [
     slug: "analog-radio",
     category: "Product Visualization",
     description: "Realistic analog radio designed in Autodesk Maya with detailed 3D modeling, lighting, and texturing for high-quality product visualization.",
-    thumbnail: "/images/portfolio/radio1.jpg",
+    thumbnail: projectImages("analog-radio", 2)[0],
+    gallery: projectImages("analog-radio", 2),
+    tools: ["Autodesk Maya", "Substance Painter", "Arnold Renderer"],
     featured: true,
   },
   {
@@ -36,7 +53,10 @@ export const PROJECTS_DATA = [
     slug: "breakfast-table",
     category: "Product Visualization",
     description: "Detailed breakfast table scene created in Maya with plates, cutlery, food items, textured in Substance Painter with natural lighting.",
-    thumbnail: "/images/portfolio/spoon.jpg",
+    thumbnail: projectImages("breakfast-table", 4)[0],
+    gallery: projectImages("breakfast-table", 4),
+    video: "/videos/projects/breakfast-table.mp4",
+    tools: ["Autodesk Maya", "Substance Painter", "Arnold Renderer"],
     featured: true,
   },
   {
@@ -44,7 +64,9 @@ export const PROJECTS_DATA = [
     slug: "retro-tv",
     category: "Product Visualization",
     description: "Classic retro television model with authentic proportions and studio lighting setup.",
-    thumbnail: "/images/portfolio/tv1.jpg",
+    thumbnail: projectImages("retro-tv", 2)[0],
+    gallery: projectImages("retro-tv", 2),
+    tools: ["Autodesk Maya", "Adobe Photoshop"],
     featured: false,
   },
   {
@@ -52,7 +74,9 @@ export const PROJECTS_DATA = [
     slug: "pressure-cooker",
     category: "Product Visualization",
     description: "Photorealistic pressure cooker set with metallic materials and professional studio lighting.",
-    thumbnail: "/images/portfolio/Cooker_1.jpg",
+    thumbnail: projectImages("pressure-cooker", 4)[0],
+    gallery: projectImages("pressure-cooker", 4),
+    tools: ["Autodesk Maya", "Substance Painter", "Arnold Renderer"],
     featured: false,
   },
   {
@@ -60,7 +84,9 @@ export const PROJECTS_DATA = [
     slug: "cosmetic-display",
     category: "Product Visualization",
     description: "Luxury cosmetic product arrangement on golden cylindrical pedestals with dramatic warm lighting.",
-    thumbnail: "/images/portfolio/product_1.jpg",
+    thumbnail: projectImages("cosmetic-display", 2)[0],
+    gallery: projectImages("cosmetic-display", 2),
+    tools: ["Autodesk Maya", "Substance Painter"],
     featured: false,
   },
   {
@@ -68,7 +94,10 @@ export const PROJECTS_DATA = [
     slug: "horror-classroom",
     category: "Architectural",
     description: "A typical classroom transformed into a chilling scene with flickering lights, eerie shadows, and unsettling atmospheric lighting.",
-    thumbnail: "/images/portfolio/classroom_img.jpg",
+    thumbnail: projectImages("horror-classroom", 4)[0],
+    gallery: projectImages("horror-classroom", 4),
+    video: "/videos/projects/horror-classroom.mp4",
+    tools: ["Autodesk Maya", "Arnold Renderer", "Adobe Photoshop"],
     featured: true,
   },
   {
@@ -76,7 +105,9 @@ export const PROJECTS_DATA = [
     slug: "hospital-corridor",
     category: "Architectural",
     description: "Atmospheric hospital hallway with dramatic ceiling lighting and clinical ambiance.",
-    thumbnail: "/images/portfolio/hospital1edit.jpg",
+    thumbnail: projectImages("hospital-corridor", 3)[0],
+    gallery: projectImages("hospital-corridor", 3),
+    tools: ["Autodesk Maya", "Arnold Renderer"],
     featured: false,
   },
   {
@@ -84,7 +115,10 @@ export const PROJECTS_DATA = [
     slug: "interior-hall",
     category: "Architectural",
     description: "Moody interior scene with warm bulb lighting, moonlit window, and sophisticated shadow play.",
-    thumbnail: "/images/portfolio/hall.jpg",
+    thumbnail: projectImages("interior-hall", 4)[0],
+    gallery: projectImages("interior-hall", 4),
+    video: "/videos/projects/interior-hall.mp4",
+    tools: ["Autodesk Maya", "Arnold Renderer", "Adobe Photoshop"],
     featured: false,
   },
   {
@@ -92,7 +126,9 @@ export const PROJECTS_DATA = [
     slug: "dark-forest",
     category: "Environments",
     description: "Ethereal dark forest environment with misty teal atmosphere, volumetric lighting, and detailed vegetation.",
-    thumbnail: "/images/portfolio/forest.jpg",
+    thumbnail: projectImages("dark-forest", 2)[0],
+    gallery: projectImages("dark-forest", 2),
+    tools: ["Blender", "Substance Painter"],
     featured: true,
   },
   {
@@ -100,7 +136,9 @@ export const PROJECTS_DATA = [
     slug: "elden-ring",
     category: "Environments",
     description: "Epic fantasy landscape inspired by Elden Ring, featuring a sword on a rock formation with golden hour lighting.",
-    thumbnail: "/images/portfolio/elden_ring.jpg",
+    thumbnail: projectImages("elden-ring", 2)[0],
+    gallery: projectImages("elden-ring", 2),
+    tools: ["Blender", "Unreal Engine"],
     featured: false,
   },
   {
@@ -108,7 +146,10 @@ export const PROJECTS_DATA = [
     slug: "chess-set",
     category: "Creative",
     description: "Stylized metallic chess pieces with red and cyan color palette on a dramatic checkered board.",
-    thumbnail: "/images/portfolio/chess.png",
+    thumbnail: projectImages("chess-set", 4)[0],
+    gallery: projectImages("chess-set", 4),
+    video: "/videos/projects/chess-set.mp4",
+    tools: ["Autodesk Maya", "Substance Painter", "Arnold Renderer"],
     featured: true,
   },
   {
@@ -116,7 +157,123 @@ export const PROJECTS_DATA = [
     slug: "battle-axe",
     category: "Creative",
     description: "Detailed battle axe model with realistic materials and dramatic studio presentation.",
-    thumbnail: "/images/portfolio/axe.jpg",
+    thumbnail: projectImages("battle-axe", 1)[0],
+    gallery: projectImages("battle-axe", 1),
+    tools: ["Autodesk Maya", "Substance Painter"],
+    featured: false,
+  },
+  {
+    title: "Robotic Arm",
+    slug: "robotic-arm",
+    category: "Creative",
+    description: "Precision six-axis robotic arm concept rendered in cyan and white, showcasing hard-surface modeling and mechanical detailing.",
+    thumbnail: projectImages("robotic-arm", 4)[0],
+    gallery: projectImages("robotic-arm", 4),
+    tools: ["Autodesk Maya", "Substance Painter", "Arnold Renderer"],
+    featured: false,
+  },
+  {
+    title: "Cyber Mech Hand",
+    slug: "cyber-mech-hand",
+    category: "Creative",
+    description: "A stylized cybernetic hand and arm assembly set against a glowing circuit-board backdrop, blending hard-surface sculpting with sci-fi motion graphics.",
+    thumbnail: projectImages("cyber-mech-hand", 2)[0],
+    gallery: projectImages("cyber-mech-hand", 2),
+    video: "/videos/projects/cyber-mech-hand.mp4",
+    tools: ["Autodesk Maya", "Substance Painter", "Adobe After Effects"],
+    featured: true,
+  },
+  {
+    title: "Neon Portal",
+    slug: "neon-portal",
+    category: "Environments",
+    description: "A glowing cyan door frame standing in overgrown night grass — a surreal, atmospheric environment study in volumetric light and fog.",
+    thumbnail: projectImages("neon-portal", 2)[0],
+    gallery: projectImages("neon-portal", 2),
+    tools: ["Blender", "Adobe After Effects"],
+    featured: false,
+  },
+  {
+    title: "Bedroom Interior",
+    slug: "bedroom-interior",
+    category: "Architectural",
+    description: "A warm, colorful bedroom interior with a moonlit window, styled bookshelf, and layered ambient and practical lighting.",
+    thumbnail: projectImages("bedroom-interior", 3)[0],
+    gallery: projectImages("bedroom-interior", 3),
+    tools: ["Autodesk Maya", "Arnold Renderer"],
+    featured: false,
+  },
+  {
+    title: "Loft Living Room",
+    slug: "loft-living-room",
+    category: "Architectural",
+    description: "A double-height loft living space with exposed brick, a mezzanine railing, and cinematic framed artwork lit for a premium editorial look.",
+    thumbnail: projectImages("loft-living-room", 3)[0],
+    gallery: projectImages("loft-living-room", 3),
+    tools: ["Autodesk Maya", "Arnold Renderer"],
+    featured: true,
+  },
+  {
+    title: "City Street at Night",
+    slug: "city-street",
+    category: "Environments",
+    description: "A rain-lit night street scene with rolling shutter garages and overhead power lines, built for mood and depth.",
+    thumbnail: projectImages("city-street", 1)[0],
+    gallery: projectImages("city-street", 1),
+    video: "/videos/projects/city-street.mp4",
+    tools: ["Blender", "Adobe After Effects"],
+    featured: false,
+  },
+  {
+    title: "CASCON Prefab Building",
+    slug: "cascon-prefab",
+    category: "Architectural",
+    description: "Client commercial project for CASCON Ecostructure — a branded pre-engineered building construction sequence animation used for sales and marketing.",
+    thumbnail: projectImages("cascon-prefab", 1)[0],
+    gallery: projectImages("cascon-prefab", 1),
+    video: "/videos/showreel/cascon.mp4",
+    tools: ["Autodesk Maya", "Adobe After Effects", "Adobe Premiere Pro"],
+    featured: true,
+  },
+  {
+    title: "Wireless Earbuds",
+    slug: "wireless-earbuds",
+    category: "Product Visualization",
+    description: "Sleek wireless earbuds product animation with reflective studio lighting and a floating hero composition.",
+    thumbnail: projectImages("wireless-earbuds", 1)[0],
+    gallery: projectImages("wireless-earbuds", 1),
+    video: "/videos/projects/wireless-earbuds.mp4",
+    tools: ["Autodesk Maya", "Substance Painter", "Adobe After Effects"],
+    featured: false,
+  },
+  {
+    title: "Rattan Sofa",
+    slug: "rattan-sofa",
+    category: "Product Visualization",
+    description: "Modern wicker and black steel-frame sofa with woven cane paneling, modeled and rendered for a furniture catalog look.",
+    thumbnail: projectImages("rattan-sofa", 2)[0],
+    gallery: projectImages("rattan-sofa", 2),
+    tools: ["Autodesk Maya", "Substance Painter"],
+    featured: false,
+  },
+  {
+    title: "Rocking Chair",
+    slug: "rocking-chair",
+    category: "Product Visualization",
+    description: "A sunlit wooden rocking chair scene with a woven rug and warm window light, styled as a lifestyle interior render.",
+    thumbnail: projectImages("rocking-chair", 1)[0],
+    gallery: projectImages("rocking-chair", 1),
+    tools: ["Autodesk Maya", "Arnold Renderer"],
+    featured: false,
+  },
+  {
+    title: "Cane Bed Headboard",
+    slug: "cane-bed",
+    category: "Product Visualization",
+    description: "Close-up detail render of a wooden cane-work bed headboard, focused on material and weave fidelity.",
+    thumbnail: projectImages("cane-bed", 2)[0],
+    gallery: projectImages("cane-bed", 2),
+    tools: ["Autodesk Maya", "Substance Painter"],
     featured: false,
   },
 ] as const;
@@ -142,17 +299,29 @@ export const EXPERIENCE_DATA = [
   },
 ] as const;
 
+export const SKILL_CATEGORIES = ["3D", "Motion", "Design", "AI Tools"] as const;
+
 export const SKILLS_DATA = [
-  { name: "Autodesk Maya", category: "3D & Modeling", proficiency: 5 },
-  { name: "Blender", category: "3D & Modeling", proficiency: 4 },
-  { name: "Houdini", category: "3D & Modeling", proficiency: 3 },
-  { name: "3ds Max", category: "3D & Modeling", proficiency: 3 },
-  { name: "Substance Painter", category: "Texturing", proficiency: 5 },
-  { name: "Mudbox", category: "Texturing", proficiency: 3 },
-  { name: "Adobe After Effects", category: "Compositing", proficiency: 4 },
-  { name: "Adobe Photoshop", category: "Compositing", proficiency: 4 },
-  { name: "Unreal Engine", category: "Game Engines", proficiency: 3 },
-  { name: "AutoCAD", category: "3D & Modeling", proficiency: 3 },
+  // 3D
+  { name: "Autodesk Maya", category: "3D", icon: "maya", proficiency: 5 },
+  { name: "Blender", category: "3D", icon: "blender", proficiency: 4 },
+  { name: "Substance Painter", category: "3D", icon: "substance-painter", proficiency: 5 },
+  { name: "Unreal Engine", category: "3D", icon: "unreal", proficiency: 3 },
+  { name: "AutoCAD", category: "3D", icon: "autocad", proficiency: 3 },
+  // Motion
+  { name: "Adobe After Effects", category: "Motion", icon: "after-effects", proficiency: 4 },
+  { name: "Premiere Pro", category: "Motion", icon: "premiere", proficiency: 3 },
+  // Design
+  { name: "Photoshop", category: "Design", icon: "photoshop", proficiency: 4 },
+  { name: "Illustrator", category: "Design", icon: "illustrator", proficiency: 3 },
+  // AI Tools
+  { name: "ChatGPT", category: "AI Tools", icon: "chatgpt", proficiency: 5 },
+  { name: "Midjourney", category: "AI Tools", icon: "midjourney", proficiency: 4 },
+  { name: "Runway", category: "AI Tools", icon: "runway", proficiency: 4 },
+  { name: "Kling AI", category: "AI Tools", icon: "kling", proficiency: 4 },
+  { name: "Pika", category: "AI Tools", icon: "pika", proficiency: 3 },
+  { name: "Veo", category: "AI Tools", icon: "veo", proficiency: 3 },
+  { name: "Adobe Firefly", category: "AI Tools", icon: "firefly", proficiency: 3 },
 ] as const;
 
 export const CATEGORIES = ["All", "Product Visualization", "Architectural", "Environments", "Creative"] as const;

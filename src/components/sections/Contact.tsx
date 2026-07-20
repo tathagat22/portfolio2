@@ -4,15 +4,35 @@ import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { motion } from "framer-motion";
-import { SOCIAL_LINKS } from "@/lib/utils/constants";
+import type { IconType } from "react-icons";
+import { FaLinkedin, FaArtstation, FaInstagram, FaBehance, FaGithub } from "react-icons/fa6";
+import { SOCIAL_LINKS, CONTACT_INFO } from "@/lib/utils/constants";
+import Button from "@/components/ui/Button";
 
 gsap.registerPlugin(ScrollTrigger);
+
+const SOCIAL_ICONS: Record<string, IconType> = {
+  linkedin: FaLinkedin,
+  artstation: FaArtstation,
+  instagram: FaInstagram,
+  behance: FaBehance,
+  github: FaGithub,
+};
 
 export default function Contact() {
   const sectionRef = useRef<HTMLElement>(null);
   const [formState, setFormState] = useState({ name: "", email: "", message: "" });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  const copyEmail = async () => {
+    try {
+      await navigator.clipboard.writeText(CONTACT_INFO.email);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {}
+  };
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -178,16 +198,55 @@ export default function Contact() {
                 to discussing new opportunities and creative collaborations.
               </p>
 
-              <div className="space-y-4 mb-8">
+              <div className="flex items-center gap-2 mb-2">
                 <a
-                  href="mailto:kautilya1011@gmail.com"
-                  className="font-body text-lg text-white hover:text-[var(--accent-purple)] transition-colors block"
+                  href={SOCIAL_LINKS.email}
+                  className="font-body text-lg text-white hover:text-[var(--accent-purple)] transition-colors"
                 >
-                  kautilya1011@gmail.com
+                  {CONTACT_INFO.email}
                 </a>
-                <p className="font-body text-lg text-text-secondary">
-                  +91-6205849838
-                </p>
+                <button
+                  onClick={copyEmail}
+                  aria-label="Copy email address"
+                  className="text-text-tertiary hover:text-[var(--accent-purple)] transition-colors"
+                >
+                  {copied ? (
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                      <path d="M2 8l4 4 8-8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  ) : (
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                      <rect x="5" y="5" width="9" height="9" rx="1.5" stroke="currentColor" strokeWidth="1.3" />
+                      <path d="M11 5V2.5A1.5 1.5 0 009.5 1H2.5A1.5 1.5 0 001 2.5v7A1.5 1.5 0 002.5 11H5" stroke="currentColor" strokeWidth="1.3" />
+                    </svg>
+                  )}
+                </button>
+                {copied && (
+                  <span className="font-body text-xs text-[var(--accent-purple)]">Copied!</span>
+                )}
+              </div>
+              <p className="font-body text-lg text-text-secondary mb-8">{CONTACT_INFO.phone}</p>
+
+              <div className="flex flex-wrap gap-4 mb-8">
+                <Button
+                  href={`tel:${CONTACT_INFO.phone.replace(/\s+/g, "")}`}
+                  variant="outline"
+                  icon={
+                    <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                      <path
+                        d="M3 2h2.5l1 3.5-1.5 1a8 8 0 004.5 4.5l1-1.5 3.5 1V14a1 1 0 01-1 1A11 11 0 012 3a1 1 0 011-1z"
+                        stroke="currentColor"
+                        strokeWidth="1.2"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  }
+                >
+                  Call
+                </Button>
+                <Button href={SOCIAL_LINKS.email} variant="primary">
+                  Email Me
+                </Button>
               </div>
             </div>
 
@@ -195,6 +254,7 @@ export default function Contact() {
             <div className="flex gap-4">
               {Object.entries(SOCIAL_LINKS).map(([name, url]) => {
                 if (name === "email") return null;
+                const Icon = SOCIAL_ICONS[name];
                 return (
                   <motion.a
                     key={name}
@@ -204,9 +264,7 @@ export default function Contact() {
                     whileHover={{ scale: 1.1, y: -2 }}
                     className="w-12 h-12 rounded-full border border-white/20 flex items-center justify-center text-text-secondary hover:text-[var(--accent-purple)] hover:border-[var(--accent-purple)]/50 transition-colors duration-300"
                   >
-                    <span className="font-body text-xs uppercase tracking-wider">
-                      {name.slice(0, 2)}
-                    </span>
+                    {Icon && <Icon className="w-4 h-4" />}
                   </motion.a>
                 );
               })}

@@ -82,6 +82,7 @@ export default function Experience() {
     <section
       ref={sectionRef}
       id="experience"
+      data-theme="work"
       className="relative py-24 md:py-40 overflow-hidden"
     >
       {/* Section Header */}
@@ -89,7 +90,7 @@ export default function Experience() {
         <p className="font-body text-sm text-text-secondary tracking-[0.3em] uppercase mb-3">
           Journey
         </p>
-        <h2 className="font-display text-4xl md:text-6xl lg:text-8xl font-bold text-white">
+        <h2 className="font-display text-4xl md:text-6xl lg:text-7xl font-bold text-white">
           EXPERIENCE
         </h2>
       </div>
@@ -106,10 +107,10 @@ export default function Experience() {
               className="flex-shrink-0 w-[500px] relative pt-20 px-8"
             >
               {/* Timeline Dot */}
-              <div className="absolute top-[44px] left-8 w-4 h-4 rounded-full border-2 border-[var(--accent-cyan)] bg-[#0a0a0a] z-10" />
+              <div className="absolute top-[44px] left-8 w-4 h-4 rounded-full border-2 border-[var(--section-accent)] bg-[#0a0a0a] z-10" />
 
               {/* Period */}
-              <p className="font-body text-sm text-[var(--accent-cyan)] tracking-wider mb-2">
+              <p className="font-body text-sm text-[var(--section-accent)] tracking-wider mb-2">
                 {exp.period}
               </p>
 
@@ -146,9 +147,9 @@ export default function Experience() {
           {EXPERIENCE_DATA.map((exp) => (
             <div key={exp.company} className="exp-card relative pb-12 last:pb-0">
               {/* Timeline Dot */}
-              <div className="absolute -left-[9px] top-1 w-4 h-4 rounded-full border-2 border-[var(--accent-cyan)] bg-[#0a0a0a]" />
+              <div className="absolute -left-[9px] top-1 w-4 h-4 rounded-full border-2 border-[var(--section-accent)] bg-[#0a0a0a]" />
 
-              <p className="font-body text-sm text-[var(--accent-cyan)] tracking-wider mb-1">
+              <p className="font-body text-sm text-[var(--section-accent)] tracking-wider mb-1">
                 {exp.period}
               </p>
               <h3 className="font-display text-xl font-bold text-white mb-1">

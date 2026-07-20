@@ -57,16 +57,12 @@ export default function ScrollVine() {
       });
 
       // Geometries
-      const torusGeo = new THREE.TorusGeometry(0.8, 0.3, 16, 40);
       const icoGeo = new THREE.IcosahedronGeometry(0.6, 0);
       const octGeo = new THREE.OctahedronGeometry(0.5, 0);
       const sphereGeo = new THREE.SphereGeometry(0.4, 12, 12);
       const torusKnotGeo = new THREE.TorusKnotGeometry(0.5, 0.15, 64, 16);
 
       // Meshes
-      const torus = new THREE.Mesh(torusGeo, cyanMat);
-      torus.position.set(0, 3, 0);
-
       const ico = new THREE.Mesh(icoGeo, purpleMat);
       ico.position.set(0.5, 1, -1);
 
@@ -79,7 +75,7 @@ export default function ScrollVine() {
       const knot = new THREE.Mesh(torusKnotGeo, purpleMat);
       knot.position.set(-0.2, -5, 0);
 
-      scene.add(torus, ico, oct, sphere, knot);
+      scene.add(ico, oct, sphere, knot);
 
       // Particles
       const particleCount = 80;
@@ -155,10 +151,6 @@ export default function ScrollVine() {
         camera.lookAt(0, camera.position.y - 1, 0);
 
         // Rotate shapes
-        torus.rotation.x = t * 0.3 + scrollProgress * Math.PI;
-        torus.rotation.y = t * 0.5;
-        torus.scale.setScalar(1 + Math.sin(scrollProgress * Math.PI) * 0.3);
-
         ico.rotation.x = t * 0.4;
         ico.rotation.z = t * 0.2 + scrollProgress * 2;
         ico.position.x = 0.5 + Math.sin(t * 0.5) * 0.3;
@@ -200,7 +192,7 @@ export default function ScrollVine() {
         window.removeEventListener("mousemove", onMouseMove);
         window.removeEventListener("resize", onResize);
         renderer.dispose();
-        [torusGeo, icoGeo, octGeo, sphereGeo, torusKnotGeo, particleGeo].forEach((g) => g.dispose());
+        [icoGeo, octGeo, sphereGeo, torusKnotGeo, particleGeo].forEach((g) => g.dispose());
         [cyanMat, purpleMat, amberMat, solidCyan, particleMat].forEach((m) => m.dispose());
       };
     }

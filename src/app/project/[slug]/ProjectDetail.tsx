@@ -6,20 +6,15 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import type { PROJECTS_DATA } from "@/lib/utils/constants";
 
 gsap.registerPlugin(ScrollTrigger);
 
-interface Project {
-  title: string;
-  slug: string;
-  category: string;
-  description: string;
-  thumbnail: string;
-  featured: boolean;
-}
+type Project = (typeof PROJECTS_DATA)[number];
 
 export default function ProjectDetail({ project }: { project: Project }) {
   const heroRef = useRef<HTMLDivElement>(null);
+  const galleryImages = project.gallery.slice(1);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -118,7 +113,7 @@ export default function ProjectDetail({ project }: { project: Project }) {
             Tools Used
           </h3>
           <div className="flex flex-wrap gap-2">
-            {["Autodesk Maya", "Substance Painter", "Adobe Photoshop"].map((tool) => (
+            {project.tools.map((tool) => (
               <span
                 key={tool}
                 className="font-body text-sm px-4 py-2 bg-white/5 border border-white/10 rounded-full text-text-secondary"
@@ -129,43 +124,56 @@ export default function ProjectDetail({ project }: { project: Project }) {
           </div>
         </motion.div>
 
-        {/* Video Placeholder */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6 }}
-          className="relative w-full aspect-video bg-elevated rounded-xl overflow-hidden mb-12 border border-white/5"
-        >
-          <div className="absolute inset-0 flex flex-col items-center justify-center gap-4">
-            <div className="w-16 h-16 rounded-full border border-white/20 flex items-center justify-center">
-              <svg className="w-6 h-6 text-white/50 ml-0.5" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M8 5v14l11-7z" />
-              </svg>
-            </div>
-            <p className="font-body text-sm text-text-tertiary tracking-wider">
-              Project Video Placeholder
-            </p>
-          </div>
-        </motion.div>
+        {/* Project Video */}
+        {"video" in project && project.video && (
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6 }}
+            className="relative w-full aspect-video bg-elevated rounded-xl overflow-hidden mb-12 border border-white/5"
+          >
+            <video
+              controls
+              loop
+              muted
+              playsInline
+              poster={project.thumbnail}
+              className="w-full h-full object-cover"
+            >
+              <source src={project.video} type="video/mp4" />
+            </video>
+          </motion.div>
+        )}
 
-        {/* 3D Viewer Placeholder */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.7 }}
-          className="relative w-full aspect-square max-h-[500px] bg-elevated rounded-xl overflow-hidden border border-white/5"
-        >
-          <div className="absolute inset-0 flex flex-col items-center justify-center gap-4">
-            <div className="w-16 h-16 rounded-lg bg-white/5 flex items-center justify-center">
-              <svg className="w-8 h-8 text-white/30" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
-              </svg>
+        {/* Gallery */}
+        {galleryImages.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.7 }}
+            className="mb-12"
+          >
+            <h3 className="font-body text-xs text-text-tertiary tracking-[0.3em] uppercase mb-4">
+              Gallery
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {galleryImages.map((src, i) => (
+                <div
+                  key={src}
+                  className="relative aspect-[4/3] rounded-xl overflow-hidden border border-white/5 group"
+                >
+                  <Image
+                    src={src}
+                    alt={`${project.title} — angle ${i + 2}`}
+                    fill
+                    className="object-cover transition-transform duration-700 group-hover:scale-105"
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                  />
+                </div>
+              ))}
             </div>
-            <p className="font-body text-sm text-text-tertiary tracking-wider">
-              Interactive 3D Model Placeholder
-            </p>
-          </div>
-        </motion.div>
+          </motion.div>
+        )}
       </div>
     </motion.main>
   );

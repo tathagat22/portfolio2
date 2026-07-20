@@ -38,6 +38,9 @@ next-env.d.ts
 # source images
 /Image_output/
 
+# raw client asset dump (multi-GB, pre-optimization source only)
+/kautilya_portfolio/
+
 # claude
 .claude/
 

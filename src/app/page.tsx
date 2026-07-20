@@ -7,6 +7,7 @@ import Showreel from "@/components/sections/Showreel";
 import About from "@/components/sections/About";
 import WorkGrid from "@/components/sections/WorkGrid";
 import Experience from "@/components/sections/Experience";
+import Resume from "@/components/sections/Resume";
 import Skills from "@/components/sections/Skills";
 import Contact from "@/components/sections/Contact";
 import Navbar from "@/components/layout/Navbar";
@@ -27,6 +28,7 @@ export default function Home() {
         <About />
         <WorkGrid />
         <Experience />
+        <Resume />
         <Skills />
         <Contact />
       </main>

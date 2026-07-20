@@ -8,8 +8,8 @@
   --bg-card: rgba(255, 255, 255, 0.03);
 
   --text-primary: #ffffff;
-  --text-secondary: #888888;
-  --text-tertiary: #555555;
+  --text-secondary: #9a9a9a;
+  --text-tertiary: #6b6b6b;
 
   --accent-cyan: #00f0ff;
   --accent-amber: #f0a500;
@@ -19,11 +19,12 @@
   --section-accent: var(--accent-cyan);
 }
 
-/* Section theme overrides */
+/* Section theme overrides — three tonal "acts" across the page:
+   cyan (intro) -> amber (work) -> purple (resume/skills/contact close) */
 [data-theme="hero"] { --section-accent: var(--accent-cyan); }
 [data-theme="work"] { --section-accent: var(--accent-amber); }
 [data-theme="creative"] { --section-accent: var(--accent-red); }
-[data-theme="contact"] { --section-accent: var(--accent-purple); }
+[data-theme="resume"], [data-theme="skills"], [data-theme="contact"] { --section-accent: var(--accent-purple); }
 
 * {
   margin: 0;
@@ -135,6 +136,34 @@ html.lenis, html.lenis body {
 .magnetic-wrap {
   position: relative;
   display: inline-flex;
+}
+
+/* Button click ripple */
+@keyframes button-ripple {
+  from {
+    opacity: 0.5;
+    transform: scale(0);
+  }
+  to {
+    opacity: 0;
+    transform: scale(1);
+  }
+}
+
+/* Glassmorphism card */
+.glass-card {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 24px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+}
+
+/* Idle floating loop */
+@keyframes float-y {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
 }
 
 /* Split text lines */

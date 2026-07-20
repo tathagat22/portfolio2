@@ -18,6 +18,11 @@ export default function WorkGrid() {
       ? PROJECTS_DATA
       : PROJECTS_DATA.filter((p) => p.category === activeCategory);
 
+  const categoryCounts: Record<string, number> = { All: PROJECTS_DATA.length };
+  for (const p of PROJECTS_DATA) {
+    categoryCounts[p.category] = (categoryCounts[p.category] ?? 0) + 1;
+  }
+
   useEffect(() => {
     const ctx = gsap.context(() => {
       // Section heading reveal
@@ -61,7 +66,7 @@ export default function WorkGrid() {
           <p className="font-body text-sm text-text-secondary tracking-[0.3em] uppercase mb-3">
             Portfolio
           </p>
-          <h2 className="font-display text-4xl md:text-6xl lg:text-8xl font-bold text-white">
+          <h2 className="font-display text-4xl md:text-6xl lg:text-7xl font-bold text-white">
             SELECTED
             <br />
             <span className="text-[var(--accent-amber)]">WORK</span>
@@ -90,14 +95,14 @@ export default function WorkGrid() {
                     : "text-text-secondary hover:text-white"
                 }`}
               >
-                {cat}
+                {cat} <span className="opacity-60">({categoryCounts[cat] ?? 0})</span>
               </span>
             </button>
           ))}
         </div>
 
-        {/* Bento Grid */}
-        <motion.div layout className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-3 md:gap-4 auto-rows-[240px] sm:auto-rows-[280px] md:auto-rows-[320px]">
+        {/* Uniform Grid */}
+        <motion.div layout className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-5">
           <AnimatePresence mode="popLayout">
             {filteredProjects.map((project, index) => (
               <motion.div
@@ -109,9 +114,9 @@ export default function WorkGrid() {
                 transition={{
                   opacity: { duration: 0.3 },
                   layout: { duration: 0.4, type: "spring", stiffness: 300, damping: 30 },
-                  delay: index * 0.05,
+                  delay: index * 0.04,
                 }}
-                className={getBentoSpan(project.featured, index)}
+                className="aspect-[4/5]"
               >
                 <BentoCard project={project} />
               </motion.div>
@@ -121,17 +126,4 @@ export default function WorkGrid() {
       </div>
     </section>
   );
-}
-
-function getBentoSpan(featured: boolean, index: number): string {
-  if (featured) {
-    // Featured cards are larger - alternate between wide and tall
-    if (index % 3 === 0) return "lg:col-span-8 lg:row-span-2";
-    return "lg:col-span-7 lg:row-span-2";
-  }
-  // Standard cards fill remaining space
-  if (index % 5 === 1) return "lg:col-span-4 lg:row-span-1";
-  if (index % 5 === 2) return "lg:col-span-5 lg:row-span-1";
-  if (index % 5 === 3) return "lg:col-span-4 lg:row-span-1";
-  return "lg:col-span-5 lg:row-span-1";
 }

@@ -25,7 +25,9 @@
       "WebFetch(domain:deuexsolutions.com)",
       "WebFetch(domain:dev.to)",
       "WebFetch(domain:raw.githubusercontent.com)",
-      "Bash(curl -sL https://raw.githubusercontent.com/LottieFiles/dotlottie-web/main/apps/dotlottie-web-example/src/main.ts)"
+      "Bash(curl -sL https://raw.githubusercontent.com/LottieFiles/dotlottie-web/main/apps/dotlottie-web-example/src/main.ts)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:3000)",
+      "Read(//private/tmp/**)"
     ]
   }
 }

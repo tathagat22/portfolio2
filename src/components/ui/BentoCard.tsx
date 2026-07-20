@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
@@ -11,6 +11,7 @@ interface Project {
   category: string;
   description: string;
   thumbnail: string;
+  video?: string;
   featured: boolean;
 }
 
@@ -21,6 +22,18 @@ interface BentoCardProps {
 export default function BentoCard({ project }: BentoCardProps) {
   const [isHovered, setIsHovered] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    if (isHovered) {
+      video.currentTime = 0;
+      video.play().catch(() => {});
+    } else {
+      video.pause();
+    }
+  }, [isHovered]);
 
   return (
     <Link href={`/project/${project.slug}`}>
@@ -28,7 +41,7 @@ export default function BentoCard({ project }: BentoCardProps) {
         ref={cardRef}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
-        className="relative w-full h-full rounded-xl overflow-hidden group cursor-pointer"
+        className="relative w-full h-full rounded-xl overflow-hidden group cursor-pointer shadow-lg shadow-black/30 transition-shadow duration-500 hover:shadow-2xl hover:shadow-black/50"
         whileHover={{ scale: 1.02 }}
         transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
       >
@@ -41,8 +54,29 @@ export default function BentoCard({ project }: BentoCardProps) {
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 40vw"
         />
 
+        {/* Motion preview on hover */}
+        {project.video && (
+          <video
+            ref={videoRef}
+            loop
+            muted
+            playsInline
+            className="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+          >
+            <source src={project.video} type="video/mp4" />
+          </video>
+        )}
+
         {/* Gradient Overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent transition-opacity duration-500" />
+
+        {/* Featured marker */}
+        {project.featured && (
+          <div className="absolute top-4 left-4 z-10 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/50 backdrop-blur-sm border border-white/10">
+            <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent-amber)]" />
+            <span className="font-body text-[9px] tracking-[0.15em] uppercase text-white/80">Featured</span>
+          </div>
+        )}
 
         {/* Hover Glow */}
         <motion.div
