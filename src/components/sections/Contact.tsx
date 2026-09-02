@@ -11,6 +11,10 @@ import Button from "@/components/ui/Button";
 
 gsap.registerPlugin(ScrollTrigger);
 
+// Web3Forms access keys are public by design - they only authorise posting to
+// the inbox they were issued for, so there is nothing to keep server-side.
+const ACCESS_KEY = process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY;
+
 const SOCIAL_ICONS: Record<string, IconType> = {
   linkedin: FaLinkedin,
   artstation: FaArtstation,
@@ -24,6 +28,7 @@ export default function Contact() {
   const [formState, setFormState] = useState({ name: "", email: "", message: "" });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
 
   const copyEmail = async () => {
@@ -65,13 +70,43 @@ export default function Contact() {
     return () => ctx.revert();
   }, []);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (!ACCESS_KEY) {
+      setError("The contact form isn't configured yet. Please email me directly.");
+      return;
+    }
+
+    // Bots fill every field they find; a real person never sees this one.
+    const honeypot = (e.currentTarget.elements.namedItem("botcheck") as HTMLInputElement)?.checked;
+    if (honeypot) return;
+
     setIsSubmitting(true);
-    // Placeholder - would connect to API route
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    setSubmitted(true);
-    setIsSubmitting(false);
+    setError(null);
+
+    try {
+      const res = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({
+          access_key: ACCESS_KEY,
+          name: formState.name,
+          email: formState.email,
+          message: formState.message,
+          subject: `Portfolio enquiry from ${formState.name}`,
+          from_name: "kautilyayashovardhan.com",
+          replyto: formState.email,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) throw new Error(data.message ?? "Request failed");
+      setSubmitted(true);
+    } catch {
+      setError("Something went wrong sending that. Please try again, or email me directly.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const line1 = "LET'S CREATE";
@@ -134,6 +169,13 @@ export default function Contact() {
               </motion.div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-6">
+                <input
+                  type="checkbox"
+                  name="botcheck"
+                  className="hidden"
+                  tabIndex={-1}
+                  autoComplete="off"
+                />
                 <div>
                   <label className="font-body text-xs text-text-tertiary tracking-wider uppercase block mb-2">
                     Name
@@ -183,6 +225,12 @@ export default function Contact() {
                     <path d="M1 8h14m0 0L9 2m6 6L9 14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                 </button>
+
+                {error && (
+                  <p role="alert" className="font-body text-sm text-[#ff6b6b]">
+                    {error}
+                  </p>
+                )}
               </form>
             )}
           </div>
