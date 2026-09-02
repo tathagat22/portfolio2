@@ -5,7 +5,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { motion } from "framer-motion";
 import type { IconType } from "react-icons";
-import { FaLinkedin, FaArtstation, FaInstagram, FaBehance, FaGithub } from "react-icons/fa6";
+import { FaLinkedin, FaInstagram, FaYoutube } from "react-icons/fa6";
 import { SOCIAL_LINKS, CONTACT_INFO } from "@/lib/utils/constants";
 import Button from "@/components/ui/Button";
 
@@ -17,10 +17,8 @@ const ACCESS_KEY = process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY;
 
 const SOCIAL_ICONS: Record<string, IconType> = {
   linkedin: FaLinkedin,
-  artstation: FaArtstation,
   instagram: FaInstagram,
-  behance: FaBehance,
-  github: FaGithub,
+  youtube: FaYoutube,
 };
 
 export default function Contact() {

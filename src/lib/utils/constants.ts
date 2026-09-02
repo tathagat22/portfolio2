@@ -26,13 +26,10 @@ export const CONTACT_INFO = {
 
 export const RESUME_PDF = "/Kautilya_Resume___2026.pdf";
 
-// TODO: replace with real handles once the client supplies them
 export const SOCIAL_LINKS = {
-  linkedin: "https://linkedin.com/in/kautilya-yashovardhan",
-  artstation: "https://artstation.com/kautilya",
-  instagram: "https://instagram.com/kautilya",
-  behance: "#",
-  github: "#",
+  linkedin: "https://www.linkedin.com/in/kautilya-yashovardhan",
+  instagram: "https://www.instagram.com/forge.in.pixel/",
+  youtube: "https://www.youtube.com/@S.h.w.e.d",
   email: `mailto:${CONTACT_INFO.email}`,
 } as const;
 
@@ -327,6 +324,110 @@ export const PROJECTS_DATA = [
     featured: false,
   },
 ] as const;
+
+/* ── Gallery ──────────────────────────────────────────────────────────────────
+   Every still across the project set, flattened into one filterable wall in
+   <Gallery />. Dimensions are measured from the files rather than inherited
+   from the project (a project's width/height describes its cover only), so the
+   masonry reserves the right box for each tile and never reflows on load.
+   ────────────────────────────────────────────────────────────────────────── */
+const IMAGE_DIMENSIONS: Record<string, readonly [number, number]> = {
+  "/images/work/analog-radio/cover.webp": [1600, 900],
+  "/images/work/analog-radio/2.webp": [1400, 788],
+  "/images/work/battle-axe/cover.webp": [1600, 900],
+  "/images/work/bedroom-interior/cover.webp": [1600, 900],
+  "/images/work/bedroom-interior/2.webp": [1400, 788],
+  "/images/work/bedroom-interior/3.webp": [1400, 788],
+  "/images/work/breakfast-table/cover.webp": [1600, 900],
+  "/images/work/breakfast-table/2.webp": [1400, 788],
+  "/images/work/breakfast-table/3.webp": [1400, 788],
+  "/images/work/breakfast-table/4.webp": [1400, 788],
+  "/images/work/cane-bed/cover.webp": [1280, 720],
+  "/images/work/cane-bed/2.webp": [1280, 720],
+  "/images/work/cascon-prefab/cover.webp": [1600, 900],
+  "/images/work/chess-set/cover.webp": [1600, 2264],
+  "/images/work/chess-set/2.webp": [1400, 788],
+  "/images/work/chess-set/3.webp": [1400, 2488],
+  "/images/work/chess-set/4.webp": [1400, 788],
+  "/images/work/city-street/cover.webp": [1600, 900],
+  "/images/work/cosmetic-display/cover.webp": [1600, 900],
+  "/images/work/cosmetic-display/2.webp": [1400, 788],
+  "/images/work/cyber-mech-hand/cover.webp": [1600, 2844],
+  "/images/work/cyber-mech-hand/2.webp": [1400, 2488],
+  "/images/work/dark-forest/cover.webp": [1600, 900],
+  "/images/work/dark-forest/2.webp": [1400, 788],
+  "/images/work/elden-ring/cover.webp": [1599, 900],
+  "/images/work/elden-ring/2.webp": [1400, 788],
+  "/images/work/horror-classroom/cover.webp": [1600, 900],
+  "/images/work/horror-classroom/2.webp": [1400, 788],
+  "/images/work/horror-classroom/3.webp": [1400, 788],
+  "/images/work/horror-classroom/4.webp": [1400, 788],
+  "/images/work/hospital-corridor/cover.webp": [1600, 900],
+  "/images/work/hospital-corridor/2.webp": [1400, 788],
+  "/images/work/hospital-corridor/3.webp": [1400, 788],
+  "/images/work/interior-hall/cover.webp": [1600, 900],
+  "/images/work/interior-hall/2.webp": [1400, 788],
+  "/images/work/interior-hall/3.webp": [1400, 788],
+  "/images/work/interior-hall/4.webp": [1400, 788],
+  "/images/work/loft-living-room/cover.webp": [1600, 900],
+  "/images/work/loft-living-room/2.webp": [1400, 788],
+  "/images/work/loft-living-room/3.webp": [1400, 788],
+  "/images/work/neon-portal/cover.webp": [1080, 1920],
+  "/images/work/neon-portal/2.webp": [1080, 1920],
+  "/images/work/pressure-cooker/cover.webp": [1600, 900],
+  "/images/work/pressure-cooker/2.webp": [1400, 788],
+  "/images/work/pressure-cooker/3.webp": [1400, 788],
+  "/images/work/pressure-cooker/4.webp": [1400, 884],
+  "/images/work/rattan-sofa/cover.webp": [1280, 720],
+  "/images/work/rattan-sofa/2.webp": [1280, 720],
+  "/images/work/retro-tv/cover.webp": [1600, 900],
+  "/images/work/retro-tv/2.webp": [1400, 788],
+  "/images/work/robotic-arm/cover.webp": [1600, 900],
+  "/images/work/robotic-arm/2.webp": [1400, 788],
+  "/images/work/robotic-arm/3.webp": [1400, 788],
+  "/images/work/robotic-arm/4.webp": [1400, 788],
+  "/images/work/rocking-chair/cover.webp": [1280, 720],
+  "/images/work/wireless-earbuds/cover.webp": [1600, 900],
+};
+
+export type GalleryImage = {
+  src: string;
+  width: number;
+  height: number;
+  title: string;
+  slug: string;
+  category: string;
+  tools: readonly string[];
+  frame: number;
+  frames: number;
+};
+
+export const GALLERY_IMAGES: GalleryImage[] = PROJECTS_DATA.flatMap((project) =>
+  project.gallery.map((src, i) => {
+    const [width, height] = IMAGE_DIMENSIONS[src] ?? [project.width, project.height];
+    return {
+      src,
+      width,
+      height,
+      title: project.title,
+      slug: project.slug,
+      category: project.category,
+      tools: project.tools,
+      frame: i + 1,
+      frames: project.gallery.length,
+    };
+  })
+);
+
+// Derived, not hardcoded: a category with no stills would otherwise sit in the
+// dropdown as a dead option.
+export const GALLERY_CATEGORIES = [
+  "All",
+  ...Array.from(new Set(GALLERY_IMAGES.map((image) => image.category))),
+] as const;
+
+// The reel is motion only - stills live in the gallery.
+export const REEL_PROJECTS = PROJECTS_DATA.filter((project) => "video" in project);
 
 export const EXPERIENCE_DATA = [
   {

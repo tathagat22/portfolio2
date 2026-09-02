@@ -2,6 +2,12 @@
 
 import { SOCIAL_LINKS } from "@/lib/utils/constants";
 
+const SOCIALS = [
+  { label: "LinkedIn", href: SOCIAL_LINKS.linkedin },
+  { label: "Instagram", href: SOCIAL_LINKS.instagram },
+  { label: "YouTube", href: SOCIAL_LINKS.youtube },
+];
+
 export default function Footer() {
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -15,30 +21,17 @@ export default function Footer() {
         </p>
 
         <div className="flex items-center gap-6">
-          <a
-            href={SOCIAL_LINKS.linkedin}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-text-secondary hover:text-white transition-colors text-sm font-body"
-          >
-            LinkedIn
-          </a>
-          <a
-            href={SOCIAL_LINKS.artstation}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-text-secondary hover:text-white transition-colors text-sm font-body"
-          >
-            ArtStation
-          </a>
-          <a
-            href={SOCIAL_LINKS.instagram}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-text-secondary hover:text-white transition-colors text-sm font-body"
-          >
-            Instagram
-          </a>
+          {SOCIALS.map((social) => (
+            <a
+              key={social.label}
+              href={social.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-text-secondary hover:text-white transition-colors text-sm font-body"
+            >
+              {social.label}
+            </a>
+          ))}
         </div>
 
         <button
