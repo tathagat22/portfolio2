@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -31,21 +30,28 @@ const FRAME_H = "h-[210px] sm:h-[250px] md:h-[290px] lg:h-[320px]";
 
 const PROJECTS_BY_SLUG = new Map<string, Project>(PROJECTS_DATA.map((p) => [p.slug, p]));
 
+// The reel runs motion only - every still lives in the gallery instead. An era
+// whose work is all stills has nothing to project, so its slate is skipped too.
 function buildCells(): Cell[] {
   const cells: Cell[] = [{ kind: "leader", key: "leader" }];
   let frameNo = 0;
   for (const era of REEL_ERAS) {
+    const projects = era.projects
+      .map((slug) => PROJECTS_BY_SLUG.get(slug))
+      .filter((project): project is Project => Boolean(project?.video));
+    if (!projects.length) continue;
+
     cells.push({ kind: "slate", key: `slate-${era.id}`, era });
-    for (const slug of era.projects) {
-      const project = PROJECTS_BY_SLUG.get(slug);
-      if (!project) continue;
+    for (const project of projects) {
       frameNo += 1;
-      cells.push({ kind: "frame", key: slug, era, project, frameNo });
+      cells.push({ kind: "frame", key: project.slug, era, project, frameNo });
     }
   }
   cells.push({ kind: "tail", key: "tail" });
   return cells;
 }
+
+const REEL_FRAME_COUNT = buildCells().filter((cell) => cell.kind === "frame").length;
 
 /* The readout above the gate — reads whatever cell the playhead is sitting on. */
 function GateReadout({ cell }: { cell: Cell | undefined }) {
@@ -70,7 +76,7 @@ function GateReadout({ cell }: { cell: Cell | undefined }) {
   } else {
     index = "END";
     title = "End of Reel";
-    meta = [`${PROJECTS_DATA.length} frames`];
+    meta = [`${REEL_FRAME_COUNT} frames`];
   }
 
   return (
@@ -116,32 +122,21 @@ function FrameCell({
       style={{ aspectRatio: `${project.width} / ${project.height}` }}
       className="reel-cell group relative block h-full shrink-0 overflow-hidden bg-black outline-none focus-visible:ring-2 focus-visible:ring-[var(--section-accent)]"
     >
-      <Image
-        src={project.thumbnail}
-        alt={project.title}
-        fill
-        sizes="(max-width: 768px) 60vw, 34vw"
-        className={`object-cover transition-[filter,transform] duration-700 ease-out ${
+      <video
+        ref={videoRef}
+        loop
+        muted
+        playsInline
+        preload="metadata"
+        poster={project.thumbnail}
+        className={`absolute inset-0 w-full h-full object-cover transition-[filter,transform] duration-700 ease-out ${
           isActive
             ? "grayscale-0 brightness-100 scale-[1.04]"
             : "grayscale-[0.9] brightness-[0.6] scale-100"
         }`}
-      />
-
-      {project.video && (
-        <video
-          ref={videoRef}
-          loop
-          muted
-          playsInline
-          preload="none"
-          className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${
-            isActive ? "opacity-100" : "opacity-0"
-          }`}
-        >
-          <source src={project.video} type="video/mp4" />
-        </video>
-      )}
+      >
+        <source src={project.video} type="video/mp4" />
+      </video>
 
       {/* Lamp flicker, only while the frame is in the gate */}
       <div
@@ -532,7 +527,7 @@ function TailCell({ isActive }: { isActive: boolean }) {
         End of Reel
       </p>
       <p className="font-body text-[10px] tracking-[0.2em] uppercase text-text-tertiary">
-        {PROJECTS_DATA.length} frames &middot; 2019 — 2026
+        {REEL_FRAME_COUNT} frames &middot; 2019 — 2026
       </p>
       <a
         href="#contact"

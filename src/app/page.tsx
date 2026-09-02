@@ -5,7 +5,7 @@ import Preloader from "@/components/sections/Preloader";
 import Hero from "@/components/sections/Hero";
 import Showreel from "@/components/sections/Showreel";
 import About from "@/components/sections/About";
-import WorkGrid from "@/components/sections/WorkGrid";
+import Gallery from "@/components/sections/Gallery";
 import ReelTimeline from "@/components/sections/ReelTimeline";
 import AIFilmWall from "@/components/sections/AIFilmWall";
 import Experience from "@/components/sections/Experience";
@@ -27,7 +27,7 @@ export default function Home() {
         <Hero />
         <Showreel />
         <About />
-        <WorkGrid />
+        <Gallery />
         <ReelTimeline />
         <AIFilmWall />
         <Experience />

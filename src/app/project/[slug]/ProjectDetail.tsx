@@ -45,7 +45,7 @@ export default function ProjectDetail({ project }: { project: Project }) {
       {/* Back Button */}
       <div className="fixed top-6 left-6 z-50">
         <Link
-          href="/#work"
+          href="/#gallery"
           className="inline-flex items-center gap-2 font-body text-sm text-text-secondary hover:text-white transition-colors bg-black/50 backdrop-blur-md px-4 py-2 rounded-full border border-white/10"
         >
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none">

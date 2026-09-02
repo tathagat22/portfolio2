@@ -2,7 +2,7 @@ export const SECTION_IDS = {
   hero: "hero",
   showreel: "showreel",
   about: "about",
-  work: "work",
+  gallery: "gallery",
   reel: "reel",
   aiFilms: "ai-films",
   experience: "experience",
@@ -11,7 +11,7 @@ export const SECTION_IDS = {
 } as const;
 
 export const NAV_LINKS = [
-  { label: "Work", href: `#${SECTION_IDS.work}` },
+  { label: "Gallery", href: `#${SECTION_IDS.gallery}` },
   { label: "Reel", href: `#${SECTION_IDS.reel}` },
   { label: "AI Films", href: `#${SECTION_IDS.aiFilms}` },
   { label: "About", href: `#${SECTION_IDS.about}` },
@@ -425,9 +425,6 @@ export const GALLERY_CATEGORIES = [
   "All",
   ...Array.from(new Set(GALLERY_IMAGES.map((image) => image.category))),
 ] as const;
-
-// The reel is motion only - stills live in the gallery.
-export const REEL_PROJECTS = PROJECTS_DATA.filter((project) => "video" in project);
 
 export const EXPERIENCE_DATA = [
   {
