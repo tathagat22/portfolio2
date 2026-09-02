@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 gsap.registerPlugin(ScrollTrigger);
@@ -117,6 +117,26 @@ export default function Hero() {
     return () => ctx.revert();
   }, []);
 
+  // Phones get a 9:16 centre crop of the same footage: object-cover on a
+  // portrait viewport would otherwise slice off most of the 16:9 frame.
+  const [variant, setVariant] = useState<"portrait" | "landscape" | null>(null);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 768px)");
+    const apply = () => setVariant(mq.matches ? "landscape" : "portrait");
+    apply();
+    mq.addEventListener("change", apply);
+    return () => mq.removeEventListener("change", apply);
+  }, []);
+
+  const isPortrait = variant === "portrait";
+  const source = isPortrait
+    ? "/videos/hero/robot-ai-portrait.mp4"
+    : "/videos/hero/robot-ai.mp4";
+  const poster = isPortrait
+    ? "/images/hero/robot-ai-poster-portrait.jpg"
+    : "/images/hero/robot-ai-poster.jpg";
+
   const line1Chars = "KAUTILYA".split("");
   const line2Chars = "YASHOVARDHAN".split("");
 
@@ -129,31 +149,28 @@ export default function Hero() {
     >
       {/* Full-screen Video Background */}
       <div className="hero-video-wrap absolute inset-0 z-0">
-        {/* Blurred wash of the same frame — fills the letterbox area the
-            contained video leaves on portrait/ultrawide viewports */}
+        {/* Poster stand-in until the viewport-matched source is chosen, so a
+            phone never starts downloading the landscape encode. */}
         <div
-          className="absolute inset-0 scale-125 bg-cover bg-center blur-[70px] saturate-150 opacity-60"
-          style={{ backgroundImage: "url(/images/hero/robot-ai-poster.jpg)" }}
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: `url(${poster})` }}
           aria-hidden="true"
         />
 
-        <video
-          ref={videoRef}
-          autoPlay
-          loop
-          muted
-          playsInline
-          className="absolute inset-0 m-auto w-auto h-auto max-w-full max-h-full object-contain"
-          poster="/images/hero/robot-ai-poster.jpg"
-          style={{
-            maskImage:
-              "linear-gradient(to bottom, transparent 0%, #000 7%, #000 88%, transparent 100%)",
-            WebkitMaskImage:
-              "linear-gradient(to bottom, transparent 0%, #000 7%, #000 88%, transparent 100%)",
-          }}
-        >
-          <source src="/videos/hero/robot-ai.mp4" type="video/mp4" />
-        </video>
+        {variant && (
+          <video
+            key={variant}
+            ref={videoRef}
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="absolute inset-0 w-full h-full object-cover"
+            poster={poster}
+          >
+            <source src={source} type="video/mp4" />
+          </video>
+        )}
 
         {/* Fallback gradient (shows briefly before the video paints) */}
         <div className="absolute inset-0 -z-10 bg-gradient-to-b from-[#050510] via-[#0a1628] to-[#0a0a0a]" />
@@ -169,11 +186,11 @@ export default function Hero() {
 
       {/* Dark overlays for text readability */}
       <div className="absolute inset-0 z-[1] bg-black/40" />
-      <div className="absolute inset-x-0 top-0 z-[1] h-[30vh] bg-gradient-to-b from-[var(--bg-primary)] to-transparent" />
+      <div className="absolute inset-x-0 top-0 z-[1] h-[22vh] bg-gradient-to-b from-[var(--bg-primary)] to-transparent" />
 
       {/* Bottom blend — hero dissolves into the next section's background */}
       <div
-        className="absolute inset-x-0 bottom-0 z-[1] h-[55vh] md:h-[45vh]"
+        className="absolute inset-x-0 bottom-0 z-[1] h-[40vh] md:h-[38vh]"
         style={{
           backgroundImage:
             "linear-gradient(to top, var(--bg-primary) 0%, rgba(10,10,10,0.94) 20%, rgba(10,10,10,0.72) 42%, rgba(10,10,10,0.36) 68%, rgba(10,10,10,0) 100%)",
