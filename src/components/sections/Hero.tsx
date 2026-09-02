@@ -125,18 +125,32 @@ export default function Hero() {
       ref={sectionRef}
       id="hero"
       data-theme="hero"
-      className="relative h-screen w-full overflow-hidden flex items-center justify-center"
+      className="relative h-svh w-full overflow-hidden flex items-center justify-center"
     >
       {/* Full-screen Video Background */}
       <div className="hero-video-wrap absolute inset-0 z-0">
+        {/* Blurred wash of the same frame — fills the letterbox area the
+            contained video leaves on portrait/ultrawide viewports */}
+        <div
+          className="absolute inset-0 scale-125 bg-cover bg-center blur-[70px] saturate-150 opacity-60"
+          style={{ backgroundImage: "url(/images/hero/robot-ai-poster.jpg)" }}
+          aria-hidden="true"
+        />
+
         <video
           ref={videoRef}
           autoPlay
           loop
           muted
           playsInline
-          className="absolute inset-0 w-full h-full object-cover"
+          className="absolute inset-0 m-auto w-auto h-auto max-w-full max-h-full object-contain"
           poster="/images/hero/robot-ai-poster.jpg"
+          style={{
+            maskImage:
+              "linear-gradient(to bottom, transparent 0%, #000 7%, #000 88%, transparent 100%)",
+            WebkitMaskImage:
+              "linear-gradient(to bottom, transparent 0%, #000 7%, #000 88%, transparent 100%)",
+          }}
         >
           <source src="/videos/hero/robot-ai.mp4" type="video/mp4" />
         </video>
@@ -155,7 +169,16 @@ export default function Hero() {
 
       {/* Dark overlays for text readability */}
       <div className="absolute inset-0 z-[1] bg-black/40" />
-      <div className="absolute inset-0 z-[1] bg-gradient-to-t from-[#0a0a0a] via-transparent to-[#0a0a0a]/60" />
+      <div className="absolute inset-x-0 top-0 z-[1] h-[30vh] bg-gradient-to-b from-[var(--bg-primary)] to-transparent" />
+
+      {/* Bottom blend — hero dissolves into the next section's background */}
+      <div
+        className="absolute inset-x-0 bottom-0 z-[1] h-[55vh] md:h-[45vh]"
+        style={{
+          backgroundImage:
+            "linear-gradient(to top, var(--bg-primary) 0%, rgba(10,10,10,0.94) 20%, rgba(10,10,10,0.72) 42%, rgba(10,10,10,0.36) 68%, rgba(10,10,10,0) 100%)",
+        }}
+      />
 
       {/* Subtle grid pattern overlay */}
       <div
