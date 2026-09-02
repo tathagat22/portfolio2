@@ -4,6 +4,7 @@ export const SECTION_IDS = {
   about: "about",
   work: "work",
   reel: "reel",
+  aiFilms: "ai-films",
   experience: "experience",
   skills: "skills",
   contact: "contact",
@@ -12,6 +13,7 @@ export const SECTION_IDS = {
 export const NAV_LINKS = [
   { label: "Work", href: `#${SECTION_IDS.work}` },
   { label: "Reel", href: `#${SECTION_IDS.reel}` },
+  { label: "AI Films", href: `#${SECTION_IDS.aiFilms}` },
   { label: "About", href: `#${SECTION_IDS.about}` },
   { label: "Experience", href: `#${SECTION_IDS.experience}` },
   { label: "Contact", href: `#${SECTION_IDS.contact}` },
@@ -442,3 +444,77 @@ export const REEL_ERAS = [
 ] as const;
 
 export const REEL_YEARS = [2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026] as const;
+
+/* ── AI film wall ─────────────────────────────────────────────────────────────
+   Generative films shown as a continuously running video wall in <AIFilmWall/>.
+   Titles are taken from Kautilya's own file names — worth confirming the public
+   ones before launch. `span` sets each tile's height in the collage.
+   ────────────────────────────────────────────────────────────────────────── */
+export const AI_FILMS = [
+  {
+    id: "krishna",
+    title: "Krishna",
+    kind: "Mythological Film",
+    note: "Kurukshetra, rendered as a generative epic.",
+    src: "/videos/ai/krishna.mp4",
+    poster: "/images/ai/krishna.webp",
+    width: 1080,
+    height: 1920,
+    span: "tall",
+  },
+  {
+    id: "devi",
+    title: "Devi",
+    kind: "Mythological Film",
+    note: "The goddess rides out — scale, dust and gold.",
+    src: "/videos/ai/devi.mp4",
+    poster: "/images/ai/devi.webp",
+    width: 1920,
+    height: 1080,
+    span: "wide",
+  },
+  {
+    id: "madman",
+    title: "Madman",
+    kind: "Narrative Spot",
+    note: "A festive brand story told end to end with AI.",
+    src: "/videos/ai/madman.mp4",
+    poster: "/images/ai/madman.webp",
+    width: 1080,
+    height: 1920,
+    span: "short",
+  },
+  {
+    // Shares the hero's file so the wall costs no extra download.
+    id: "robot",
+    title: "Robot AI",
+    kind: "Concept Film",
+    note: "Machine-made futures — the loop that opens the site.",
+    src: "/videos/hero/robot-ai.mp4",
+    poster: "/images/ai/robot.webp",
+    width: 1280,
+    height: 720,
+    span: "wide",
+  },
+  {
+    id: "aispot",
+    title: "AI Spot",
+    kind: "Commercial",
+    note: "Live-action feel and stylised 3D cut together.",
+    src: "/videos/ai/aispot.mp4",
+    poster: "/images/ai/aispot.webp",
+    width: 1080,
+    height: 1920,
+    span: "tall",
+  },
+] as const;
+
+export const AI_TOOLS_TICKER = [
+  "Runway",
+  "Kling AI",
+  "Veo",
+  "Midjourney",
+  "Pika",
+  "Adobe Firefly",
+  "ChatGPT",
+] as const;

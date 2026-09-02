@@ -7,6 +7,7 @@ import Showreel from "@/components/sections/Showreel";
 import About from "@/components/sections/About";
 import WorkGrid from "@/components/sections/WorkGrid";
 import ReelTimeline from "@/components/sections/ReelTimeline";
+import AIFilmWall from "@/components/sections/AIFilmWall";
 import Experience from "@/components/sections/Experience";
 import Skills from "@/components/sections/Skills";
 import Contact from "@/components/sections/Contact";
@@ -28,6 +29,7 @@ export default function Home() {
         <About />
         <WorkGrid />
         <ReelTimeline />
+        <AIFilmWall />
         <Experience />
         <Skills />
         <Contact />

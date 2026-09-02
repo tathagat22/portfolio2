@@ -131,8 +131,18 @@ export default function WorkGrid() {
               Coming soon
             </p>
             <p className="font-body text-sm text-text-secondary max-w-md mx-auto">
-              New pieces for this category are being finished now — check back shortly.
+              Stills for this category are being finished now. The generative films are
+              already running below.
             </p>
+            <a
+              href="#ai-films"
+              className="mt-6 inline-flex items-center gap-2 font-body text-xs tracking-[0.2em] uppercase text-[var(--accent-amber)] border-b border-[var(--accent-amber)]/40 pb-1 hover:border-[var(--accent-amber)] transition-colors"
+            >
+              View AI Films
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                <path d="M8 3v10m0 0l4-4m-4 4l-4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </a>
           </div>
         )}
       </div>

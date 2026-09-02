@@ -29,6 +29,7 @@
 [data-theme="work"] { --section-accent: var(--accent-amber); }
 [data-theme="creative"] { --section-accent: var(--accent-red); }
 [data-theme="reel"] { --section-accent: var(--accent-ember); }
+[data-theme="ai"] { --section-accent: var(--accent-red); }
 [data-theme="resume"], [data-theme="skills"], [data-theme="contact"] { --section-accent: var(--accent-purple); }
 
 * {
@@ -250,4 +251,52 @@ html.lenis, html.lenis body {
 }
 .reel-scroller::-webkit-scrollbar {
   display: none;
+}
+
+/* ── AI film wall ─────────────────────────────────────────────────────────── */
+/* The track holds the tile set twice, so a -50% shift loops seamlessly. */
+@keyframes wall-run {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(-50%, 0, 0); }
+}
+
+@keyframes wall-run-reverse {
+  from { transform: translate3d(-50%, 0, 0); }
+  to   { transform: translate3d(0, 0, 0); }
+}
+
+.wall-track {
+  animation: wall-run var(--wall-duration, 64s) linear infinite;
+  will-change: transform;
+}
+
+.wall-track-reverse {
+  animation: wall-run-reverse var(--wall-duration, 48s) linear infinite;
+  will-change: transform;
+}
+
+.wall-stage:hover .wall-track,
+.wall-stage:focus-within .wall-track {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wall-track,
+  .wall-track-reverse {
+    animation: none !important;
+  }
+}
+
+/* Slow drift on each wall panel so the mosaic breathes between cuts. */
+@keyframes tile-breathe {
+  from { transform: scale(1.02); }
+  to   { transform: scale(1.09); }
+}
+
+.tile-breathe {
+  animation: tile-breathe 22s ease-in-out infinite alternate;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tile-breathe { animation: none !important; transform: scale(1.02); }
 }
