@@ -13,6 +13,8 @@ interface Project {
   thumbnail: string;
   video?: string;
   featured: boolean;
+  width: number;
+  height: number;
 }
 
 interface BentoCardProps {
@@ -36,12 +38,13 @@ export default function BentoCard({ project }: BentoCardProps) {
   }, [isHovered]);
 
   return (
-    <Link href={`/project/${project.slug}`}>
+    <Link href={`/project/${project.slug}`} className="block">
       <motion.div
         ref={cardRef}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
-        className="relative w-full h-full rounded-xl overflow-hidden group cursor-pointer shadow-lg shadow-black/30 transition-shadow duration-500 hover:shadow-2xl hover:shadow-black/50"
+        style={{ aspectRatio: `${project.width} / ${project.height}` }}
+        className="relative w-full rounded-xl overflow-hidden group cursor-pointer shadow-lg shadow-black/30 transition-shadow duration-500 hover:shadow-2xl hover:shadow-black/50"
         whileHover={{ scale: 1.02 }}
         transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
       >
@@ -51,7 +54,7 @@ export default function BentoCard({ project }: BentoCardProps) {
           alt={project.title}
           fill
           className="object-cover transition-transform duration-700 group-hover:scale-110"
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 40vw"
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
         />
 
         {/* Motion preview on hover */}
@@ -68,11 +71,20 @@ export default function BentoCard({ project }: BentoCardProps) {
         )}
 
         {/* Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent transition-opacity duration-500" />
+        <div
+          className="absolute inset-0 transition-opacity duration-500"
+          style={{
+            background:
+              "linear-gradient(to top, rgba(0,0,0,0.94) 0%, rgba(0,0,0,0.86) 22%, rgba(0,0,0,0.48) 46%, rgba(0,0,0,0.12) 70%, transparent 88%)",
+          }}
+        />
+
+        {/* Hover scrim — the revealed copy reaches above the resting gradient */}
+        <div className="absolute inset-0 bg-black/45 opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
 
         {/* Featured marker */}
         {project.featured && (
-          <div className="absolute top-4 left-4 z-10 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/50 backdrop-blur-sm border border-white/10">
+          <div className="absolute top-3 right-3 z-10 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/50 backdrop-blur-sm border border-white/10">
             <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent-amber)]" />
             <span className="font-body text-[9px] tracking-[0.15em] uppercase text-white/80">Featured</span>
           </div>
@@ -88,12 +100,12 @@ export default function BentoCard({ project }: BentoCardProps) {
         />
 
         {/* Content Overlay */}
-        <div className="absolute inset-0 p-5 md:p-6 flex flex-col justify-end z-10">
+        <div className="absolute inset-0 p-4 md:p-5 flex flex-col justify-end z-10">
           {/* Category Tag */}
           <motion.span
             initial={false}
-            animate={{ y: isHovered ? 0 : 10, opacity: isHovered ? 1 : 0.7 }}
-            className="font-body text-[10px] md:text-xs tracking-[0.2em] uppercase text-[var(--accent-amber)] mb-2 block w-fit"
+            animate={{ opacity: isHovered ? 1 : 0.9 }}
+            className="font-body text-[9px] md:text-[10px] tracking-[0.2em] uppercase text-[var(--accent-amber)] mb-1.5 block w-fit"
           >
             {project.category}
           </motion.span>
@@ -101,9 +113,8 @@ export default function BentoCard({ project }: BentoCardProps) {
           {/* Title */}
           <motion.h3
             initial={false}
-            animate={{ y: isHovered ? 0 : 5 }}
             transition={{ duration: 0.3 }}
-            className="font-display text-xl md:text-2xl lg:text-3xl font-bold text-white leading-tight mb-2"
+            className="font-display text-lg md:text-xl font-bold text-white leading-tight"
           >
             {project.title}
           </motion.h3>
@@ -111,9 +122,9 @@ export default function BentoCard({ project }: BentoCardProps) {
           {/* Description - shows on hover */}
           <motion.p
             initial={false}
-            animate={{ y: isHovered ? 0 : 20, opacity: isHovered ? 1 : 0 }}
+            animate={{ height: isHovered ? "auto" : 0, opacity: isHovered ? 1 : 0 }}
             transition={{ duration: 0.3, delay: 0.05 }}
-            className="font-body text-sm text-text-secondary line-clamp-2 mb-3 max-w-md"
+            className="font-body text-xs md:text-sm text-text-secondary line-clamp-2 max-w-md"
           >
             {project.description}
           </motion.p>
@@ -121,9 +132,9 @@ export default function BentoCard({ project }: BentoCardProps) {
           {/* View Project CTA */}
           <motion.div
             initial={false}
-            animate={{ y: isHovered ? 0 : 20, opacity: isHovered ? 1 : 0 }}
+            animate={{ height: isHovered ? "auto" : 0, opacity: isHovered ? 1 : 0 }}
             transition={{ duration: 0.3, delay: 0.1 }}
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 mt-2"
           >
             <span className="font-body text-xs tracking-wider uppercase text-white">
               View Project

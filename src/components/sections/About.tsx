@@ -3,33 +3,15 @@
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import dynamic from "next/dynamic";
+import { RESUME_PDF } from "@/lib/utils/constants";
 
 gsap.registerPlugin(ScrollTrigger);
-
-const ModelViewer = dynamic(() => import("@/components/ui/ModelViewer"), {
-  ssr: false,
-  loading: () => (
-    <div className="w-full h-full flex items-center justify-center bg-elevated rounded-2xl">
-      <div className="w-8 h-8 border-2 border-[var(--accent-cyan)] border-t-transparent rounded-full animate-spin" />
-    </div>
-  ),
-});
-
-const stats = [
-  { value: "4+", label: "Years Experience" },
-  { value: "50+", label: "Projects Completed" },
-  { value: "3", label: "Studios Worked" },
-  { value: "10+", label: "Tools Mastered" },
-];
-
 
 export default function About() {
   const sectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Left side slides in
       gsap.from(".about-left", {
         x: -80,
         opacity: 0,
@@ -41,7 +23,6 @@ export default function About() {
         },
       });
 
-      // Right side slides in
       gsap.from(".about-right", {
         x: 80,
         opacity: 0,
@@ -52,21 +33,6 @@ export default function About() {
           start: "top 65%",
         },
       });
-
-      // Stats count up
-      gsap.from(".stat-item", {
-        y: 40,
-        opacity: 0,
-        stagger: 0.15,
-        duration: 0.8,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: ".stats-grid",
-          start: "top 80%",
-        },
-      });
-
-      // Floating tags removed - were decorative but looked distracting
     }, sectionRef);
 
     return () => ctx.revert();
@@ -85,37 +51,70 @@ export default function About() {
             About
           </p>
           <h2 className="font-display text-4xl md:text-6xl lg:text-7xl font-bold text-white">
-            Crafting Digital
+            3D Artist &amp;
             <br />
-            <span className="text-[var(--accent-cyan)]">Realities</span>
+            <span className="text-[var(--accent-cyan)]">AI Creative Director</span>
           </h2>
         </div>
 
         {/* Split Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-          {/* Left: 3D Viewer */}
-          <div className="about-left aspect-square max-h-[500px] w-full">
-            <ModelViewer />
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-start">
+          {/* Left: looping visual */}
+          <div className="about-left lg:sticky lg:top-28">
+            <div className="relative aspect-[4/3] w-full rounded-2xl overflow-hidden bg-elevated border border-white/10">
+              <video
+                autoPlay
+                muted
+                loop
+                playsInline
+                preload="metadata"
+                poster="/images/about/loop1.webp"
+                className="absolute inset-0 w-full h-full object-cover"
+              >
+                <source src="/videos/about/loop1.mp4" type="video/mp4" />
+              </video>
+              <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+              <p className="absolute bottom-4 left-5 font-body text-[10px] tracking-[0.25em] uppercase text-white/70">
+                Loop 01 &middot; Motion Study
+              </p>
+            </div>
           </div>
 
           {/* Right: Bio */}
           <div className="about-right">
-            <p className="font-body text-lg md:text-xl text-text-secondary leading-relaxed mb-6">
-              A passionate and detail-oriented <span className="text-white">3D Animator</span> with
-              expertise in Autodesk Maya, Blender 3D, and Unreal Engine. With experience spanning{" "}
-              <span className="text-white">cloth simulation, grooming, and product animations</span>,
-              I bring creative visions to life through immersive visual storytelling.
+            <p className="font-body text-lg md:text-xl text-white leading-relaxed mb-6">
+              I build visual experiences at the intersection of 3D, motion, design, and Generative
+              AI.
             </p>
-            <p className="font-body text-lg md:text-xl text-text-secondary leading-relaxed mb-8">
-              From working at <span className="text-white">Technicolor Creative Studio</span> on VFX
-              productions to crafting product visualizations at{" "}
-              <span className="text-white">Forus Electric</span>, I bridge the gap between artistic
-              vision and technical execution.
+            <p className="font-body text-base md:text-lg text-text-secondary leading-relaxed mb-5">
+              My work ranges from cinematic 3D animation and product visualization to experimental
+              AI films, motion graphics, environments, and visual concepts. I&apos;m interested in
+              the entire creative process — from developing an idea and defining its visual
+              language to building, animating, directing, and finishing the final piece.
+            </p>
+            <p className="font-body text-base md:text-lg text-text-secondary leading-relaxed mb-5">
+              With a background in professional GenAI and 3D production, I bring a
+              production-driven approach to creative experimentation. Today, I combine traditional
+              3D workflows with emerging AI tools to explore faster, stranger, and more expressive
+              ways of storytelling.
+            </p>
+            <p className="font-body text-base md:text-lg text-text-secondary leading-relaxed mb-5">
+              For me, AI isn&apos;t a replacement for craft. It&apos;s another creative instrument.
+            </p>
+            <p className="font-body text-base md:text-lg text-text-secondary leading-relaxed mb-8">
+              I&apos;m constantly experimenting with new tools, techniques, and visual languages —
+              pushing ideas beyond what a single medium can do.
+            </p>
+
+            <p className="font-display text-xl md:text-2xl font-bold italic text-white mb-10">
+              Create. Direct. Experiment. Evolve.
             </p>
 
             {/* CTA */}
             <a
-              href="#resume"
+              href={RESUME_PDF}
+              target="_blank"
+              rel="noopener noreferrer"
               className="inline-flex items-center gap-3 font-body text-sm px-6 py-3 border border-[var(--accent-cyan)]/30 rounded-full text-[var(--accent-cyan)] hover:bg-[var(--accent-cyan)]/10 transition-all duration-300 tracking-wider uppercase"
             >
               View Resume
@@ -124,20 +123,6 @@ export default function About() {
               </svg>
             </a>
           </div>
-        </div>
-
-        {/* Stats Grid */}
-        <div className="stats-grid grid grid-cols-2 md:grid-cols-4 gap-6 mt-20 pt-16 border-t border-white/10">
-          {stats.map((stat) => (
-            <div key={stat.label} className="stat-item text-center md:text-left">
-              <p className="font-display text-4xl md:text-5xl font-bold text-white mb-2">
-                {stat.value}
-              </p>
-              <p className="font-body text-sm text-text-secondary tracking-wider uppercase">
-                {stat.label}
-              </p>
-            </div>
-          ))}
         </div>
       </div>
     </section>

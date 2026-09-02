@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { motion } from "framer-motion";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import type { IconType } from "react-icons";
-import { SiAutodeskmaya, SiBlender, SiUnrealengine, SiAutocad } from "react-icons/si";
+import { SiAutodeskmaya, SiBlender, SiUnrealengine, SiAutocad, SiHoudini } from "react-icons/si";
 import { SKILLS_DATA, SKILL_CATEGORIES } from "@/lib/utils/constants";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -16,6 +17,7 @@ const SKILL_ICONS: Record<string, IconType> = {
   blender: SiBlender,
   unreal: SiUnrealengine,
   autocad: SiAutocad,
+  houdini: SiHoudini,
 };
 
 const SKILL_MONOGRAMS: Record<string, string> = {
@@ -84,14 +86,6 @@ export default function Skills() {
         scrollTrigger: { trigger: sectionRef.current, start: "top 70%" },
       });
 
-      gsap.from(".skill-card", {
-        y: 40,
-        opacity: 0,
-        stagger: 0.04,
-        duration: 0.7,
-        ease: "power3.out",
-        scrollTrigger: { trigger: sectionRef.current, start: "top 55%" },
-      });
     }, sectionRef);
 
     return () => ctx.revert();
@@ -127,9 +121,13 @@ export default function Skills() {
                     const monogram = SKILL_MONOGRAMS[skill.icon] ?? skill.name.charAt(0);
 
                     return (
-                      <div
+                      <motion.div
                         key={skill.name}
-                        className="skill-card group relative rounded-2xl border border-white/[0.06] bg-white/[0.03] p-5 transition-all duration-400 hover:-translate-y-1 hover:border-[var(--section-accent)]/30 hover:bg-[var(--section-accent)]/[0.06] hover:shadow-[0_20px_40px_rgba(255,255,255,0.06)]"
+                        initial={{ opacity: 0, y: 40 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true, amount: 0.2 }}
+                        transition={{ duration: 0.7, delay: i * 0.05, ease: [0.22, 1, 0.36, 1] }}
+                        className="skill-card group relative rounded-2xl border border-white/[0.06] bg-white/[0.03] p-5 transition-colors duration-300 hover:border-[var(--section-accent)]/30 hover:bg-[var(--section-accent)]/[0.06] hover:shadow-[0_20px_40px_rgba(255,255,255,0.06)]"
                       >
                         <div
                           className="relative mb-4"
@@ -159,7 +157,7 @@ export default function Skills() {
                             {skill.proficiency}/5
                           </span>
                         </div>
-                      </div>
+                      </motion.div>
                     );
                   })}
                 </div>

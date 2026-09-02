@@ -6,8 +6,8 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { motion, AnimatePresence } from "framer-motion";
 
-const SHOWREEL_POSTER = "/images/work/cascon-prefab/cover.webp";
-const SHOWREEL_VIDEO = "/videos/showreel/cascon.mp4";
+const SHOWREEL_POSTER = "/images/showreel/showreel-2026.webp";
+const SHOWREEL_VIDEO = "/videos/showreel/showreel-2026.mp4";
 
 gsap.registerPlugin(ScrollTrigger);
 

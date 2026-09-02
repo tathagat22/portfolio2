@@ -19,13 +19,13 @@ export default function WorkGrid() {
       : PROJECTS_DATA.filter((p) => p.category === activeCategory);
 
   const categoryCounts: Record<string, number> = { All: PROJECTS_DATA.length };
+  for (const cat of CATEGORIES) if (cat !== "All") categoryCounts[cat] = 0;
   for (const p of PROJECTS_DATA) {
     categoryCounts[p.category] = (categoryCounts[p.category] ?? 0) + 1;
   }
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Section heading reveal
       gsap.from(".work-heading", {
         y: 80,
         opacity: 0,
@@ -37,7 +37,6 @@ export default function WorkGrid() {
         },
       });
 
-      // Filter tabs reveal
       gsap.from(".work-filters", {
         y: 40,
         opacity: 0,
@@ -101,28 +100,41 @@ export default function WorkGrid() {
           ))}
         </div>
 
-        {/* Uniform Grid */}
-        <motion.div layout className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-5">
-          <AnimatePresence mode="popLayout">
-            {filteredProjects.map((project, index) => (
-              <motion.div
-                key={project.slug}
-                layout
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.9 }}
-                transition={{
-                  opacity: { duration: 0.3 },
-                  layout: { duration: 0.4, type: "spring", stiffness: 300, damping: 30 },
-                  delay: index * 0.04,
-                }}
-                className="aspect-[4/5]"
-              >
-                <BentoCard project={project} />
-              </motion.div>
-            ))}
-          </AnimatePresence>
-        </motion.div>
+        {/* Masonry — CSS columns keep every card at its own natural aspect ratio */}
+        {filteredProjects.length > 0 ? (
+          <div className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-4 md:gap-5 [column-fill:_balance]">
+            <AnimatePresence mode="popLayout">
+              {filteredProjects.map((project, index) => (
+                <motion.div
+                  key={project.slug}
+                  initial={{ opacity: 0, y: 24 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.96 }}
+                  transition={{
+                    duration: 0.45,
+                    ease: [0.22, 1, 0.36, 1],
+                    delay: Math.min(index * 0.04, 0.4),
+                  }}
+                  className="mb-4 md:mb-5 break-inside-avoid"
+                >
+                  <BentoCard project={project} />
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </div>
+        ) : (
+          <div className="border border-dashed border-white/12 rounded-2xl py-20 px-8 text-center">
+            <p className="font-body text-xs tracking-[0.3em] uppercase text-[var(--accent-amber)] mb-4">
+              {activeCategory}
+            </p>
+            <p className="font-display text-2xl md:text-3xl font-bold text-white mb-3">
+              Coming soon
+            </p>
+            <p className="font-body text-sm text-text-secondary max-w-md mx-auto">
+              New pieces for this category are being finished now — check back shortly.
+            </p>
+          </div>
+        )}
       </div>
     </section>
   );

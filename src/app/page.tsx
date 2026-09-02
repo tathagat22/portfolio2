@@ -6,8 +6,8 @@ import Hero from "@/components/sections/Hero";
 import Showreel from "@/components/sections/Showreel";
 import About from "@/components/sections/About";
 import WorkGrid from "@/components/sections/WorkGrid";
+import ReelTimeline from "@/components/sections/ReelTimeline";
 import Experience from "@/components/sections/Experience";
-import Resume from "@/components/sections/Resume";
 import Skills from "@/components/sections/Skills";
 import Contact from "@/components/sections/Contact";
 import Navbar from "@/components/layout/Navbar";
@@ -27,8 +27,8 @@ export default function Home() {
         <Showreel />
         <About />
         <WorkGrid />
+        <ReelTimeline />
         <Experience />
-        <Resume />
         <Skills />
         <Contact />
       </main>

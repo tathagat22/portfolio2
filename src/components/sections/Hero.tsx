@@ -129,7 +129,6 @@ export default function Hero() {
     >
       {/* Full-screen Video Background */}
       <div className="hero-video-wrap absolute inset-0 z-0">
-        {/* Placeholder: replace src with actual showreel video */}
         <video
           ref={videoRef}
           autoPlay
@@ -137,9 +136,9 @@ export default function Hero() {
           muted
           playsInline
           className="absolute inset-0 w-full h-full object-cover"
-          poster="/images/work/dark-forest/cover.webp"
+          poster="/images/hero/robot-ai-poster.jpg"
         >
-          <source src="/videos/hero/universe.mp4" type="video/mp4" />
+          <source src="/videos/hero/robot-ai.mp4" type="video/mp4" />
         </video>
 
         {/* Fallback gradient (shows briefly before the video paints) */}
