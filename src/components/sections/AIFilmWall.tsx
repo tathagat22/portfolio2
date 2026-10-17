@@ -9,19 +9,159 @@ type Film = (typeof AI_FILMS)[number];
 
 /* Two reels drifting in opposite directions. Each row holds every film in a
    different order so the same two never sit stacked; the set is rendered twice
-   so translating by -50% loops seamlessly. */
-const ROWS: { order: Film["id"][]; track: string; duration: string }[] = [
+   so the offset can wrap by half the track without a visible seam. */
+const ROWS: { order: Film["id"][]; direction: 1 | -1; loopSeconds: number }[] = [
   {
     order: ["krishna", "devi", "theatre", "academy", "madman", "qubit", "aispot", "robot"],
-    track: "wall-track",
-    duration: "150s",
+    direction: -1,
+    loopSeconds: 150,
   },
   {
     order: ["academy", "aispot", "robot", "madman", "qubit", "krishna", "devi", "theatre"],
-    track: "wall-track-reverse",
-    duration: "170s",
+    direction: 1,
+    loopSeconds: 170,
   },
 ];
+
+const DRAG_THRESHOLD = 6;
+
+/* A reel drifts on its own and can be grabbed: drag or swipe to scrub, flick
+   to throw it, horizontal trackpad scroll to nudge. Driven from rAF rather
+   than CSS so a drag picks up exactly where the drift left off. */
+function Reel({
+  films,
+  direction,
+  loopSeconds,
+  row,
+  onOpen,
+}: {
+  films: Film[];
+  direction: 1 | -1;
+  loopSeconds: number;
+  row: number;
+  onOpen: (film: Film) => void;
+}) {
+  const trackRef = useRef<HTMLDivElement>(null);
+  const state = useRef({
+    x: 0,
+    velocity: 0,
+    hovered: false,
+    pointerId: -1,
+    dragging: false,
+    startX: 0,
+    startY: 0,
+    lastX: 0,
+    lastT: 0,
+    suppressClick: false,
+  });
+
+  useEffect(() => {
+    const track = trackRef.current;
+    if (!track) return;
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let half = track.scrollWidth / 2;
+    const resize = new ResizeObserver(() => (half = track.scrollWidth / 2));
+    resize.observe(track);
+
+    let raf = 0;
+    let prev = performance.now();
+    const tick = (now: number) => {
+      const dt = Math.min((now - prev) / 1000, 0.05);
+      prev = now;
+      const s = state.current;
+      if (!s.dragging && half > 0) {
+        const drift = reduced || s.hovered ? 0 : (direction * half) / loopSeconds;
+        s.x += (drift + s.velocity) * dt;
+        s.velocity *= Math.pow(0.04, dt);
+        if (Math.abs(s.velocity) < 1) s.velocity = 0;
+      }
+      if (half > 0) s.x = ((s.x % half) - half) % half;
+      track.style.transform = `translate3d(${s.x}px, 0, 0)`;
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+
+    return () => {
+      cancelAnimationFrame(raf);
+      resize.disconnect();
+    };
+  }, [direction, loopSeconds]);
+
+  const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    const s = state.current;
+    s.pointerId = e.pointerId;
+    s.dragging = false;
+    s.suppressClick = false;
+    s.startX = s.lastX = e.clientX;
+    s.startY = e.clientY;
+    s.lastT = e.timeStamp;
+  };
+
+  const onPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    const s = state.current;
+    if (e.pointerId !== s.pointerId) return;
+    if (!s.dragging) {
+      const dx = e.clientX - s.startX;
+      if (Math.abs(dx) < DRAG_THRESHOLD || Math.abs(dx) < Math.abs(e.clientY - s.startY)) return;
+      s.dragging = true;
+      s.velocity = 0;
+      e.currentTarget.setPointerCapture(e.pointerId);
+    }
+    const dx = e.clientX - s.lastX;
+    const dt = Math.max(e.timeStamp - s.lastT, 1) / 1000;
+    s.x += dx;
+    s.velocity = s.velocity * 0.6 + (dx / dt) * 0.4;
+    s.lastX = e.clientX;
+    s.lastT = e.timeStamp;
+  };
+
+  const endDrag = (e: React.PointerEvent<HTMLDivElement>) => {
+    const s = state.current;
+    if (e.pointerId !== s.pointerId) return;
+    s.pointerId = -1;
+    if (!s.dragging) return;
+    s.dragging = false;
+    s.suppressClick = true;
+    // a drag that stopped before release should not be thrown
+    if (e.timeStamp - s.lastT > 80) s.velocity = 0;
+  };
+
+  return (
+    <div
+      className="min-h-0 flex-1 touch-pan-y select-none overflow-hidden"
+      onPointerDown={onPointerDown}
+      onPointerMove={onPointerMove}
+      onPointerUp={endDrag}
+      onPointerCancel={endDrag}
+      onPointerEnter={(e) => {
+        if (e.pointerType === "mouse") state.current.hovered = true;
+      }}
+      onPointerLeave={() => (state.current.hovered = false)}
+      onWheel={(e) => {
+        if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) state.current.x -= e.deltaX;
+      }}
+      onClickCapture={(e) => {
+        if (!state.current.suppressClick) return;
+        state.current.suppressClick = false;
+        e.preventDefault();
+        e.stopPropagation();
+      }}
+      onDragStart={(e) => e.preventDefault()}
+    >
+      <div ref={trackRef} className="flex h-full w-max gap-[3px] pr-[3px] will-change-transform">
+        {[...films, ...films].map((film, i) => (
+          <WallTile
+            key={`${film.id}-${i}`}
+            film={film}
+            delay={`${(i + row * 4) * -3.4}s`}
+            clone={i >= films.length}
+            onOpen={onOpen}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
 
 function WallTile({
   film,
@@ -128,29 +268,18 @@ export default function AIFilmWall() {
       data-theme="ai"
       className="relative z-[60] h-[100svh] min-h-[620px] w-full overflow-hidden bg-black"
     >
-      {/* The wall — two reels, paused while the pointer is on them */}
-      <div className="wall-stage group/wall absolute inset-0 flex flex-col gap-[3px]">
-        {ROWS.map((row, r) => {
-          const films = row.order.map((id) => byId.get(id)).filter((f): f is Film => !!f);
-          return (
-            <div key={r} className="min-h-0 flex-1 overflow-hidden">
-              <div
-                className={`${row.track} flex h-full w-max gap-[3px] pr-[3px]`}
-                style={{ ["--wall-duration" as string]: row.duration }}
-              >
-                {[...films, ...films].map((film, i) => (
-                  <WallTile
-                    key={`${film.id}-${i}`}
-                    film={film}
-                    delay={`${(i + r * 4) * -3.4}s`}
-                    clone={i >= films.length}
-                    onOpen={setActive}
-                  />
-                ))}
-              </div>
-            </div>
-          );
-        })}
+      {/* The wall — two reels, paused under the mouse and draggable */}
+      <div className="group/wall absolute inset-0 flex flex-col gap-[3px]">
+        {ROWS.map((row, r) => (
+          <Reel
+            key={r}
+            films={row.order.map((id) => byId.get(id)).filter((f): f is Film => !!f)}
+            direction={row.direction}
+            loopSeconds={row.loopSeconds}
+            row={r}
+            onOpen={setActive}
+          />
+        ))}
       </div>
 
       {/* Edge vignette so the wall sinks into the page above and below */}
@@ -183,7 +312,7 @@ export default function AIFilmWall() {
           </h2>
           <p className="mt-4 max-w-lg font-body text-sm leading-relaxed text-white/75 drop-shadow-[0_2px_12px_rgba(0,0,0,0.9)] md:text-base">
             Films built end to end with generative tools — direction, look, edit and
-            finish. Tap any panel for sound.
+            finish. Swipe the reels, tap any panel for sound.
           </p>
         </div>
       </div>
