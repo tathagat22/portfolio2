@@ -11,6 +11,70 @@ import { GALLERY_IMAGES, GALLERY_CATEGORIES, type GalleryImage } from "@/lib/uti
 gsap.registerPlugin(ScrollTrigger);
 
 const EASE_OUT = [0.22, 1, 0.36, 1] as const;
+const PAGE_SIZE = 12;
+
+function Pagination({
+  page,
+  pages,
+  onPage,
+}: {
+  page: number;
+  pages: number;
+  onPage: (page: number) => void;
+}) {
+  if (pages < 2) return null;
+
+  const arrow = (delta: -1 | 1) => {
+    const target = page + delta;
+    const disabled = target < 0 || target >= pages;
+    return (
+      <button
+        type="button"
+        onClick={() => onPage(target)}
+        disabled={disabled}
+        aria-label={delta === -1 ? "Previous page" : "Next page"}
+        className="flex h-11 w-11 items-center justify-center rounded-full border border-white/12 text-white/70 transition-colors duration-300 hover:border-[var(--accent-amber)]/60 hover:text-white disabled:pointer-events-none disabled:opacity-25"
+      >
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" style={{ transform: delta === -1 ? "rotate(180deg)" : undefined }}>
+          <path d="M5 3l5 5-5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </button>
+    );
+  };
+
+  return (
+    <nav aria-label="Gallery pages" className="mt-14 flex items-center justify-center gap-3 md:mt-20 md:gap-5">
+      {arrow(-1)}
+      <ol className="flex items-center gap-1 md:gap-2">
+        {Array.from({ length: pages }, (_, i) => {
+          const isActive = i === page;
+          return (
+            <li key={i}>
+              <button
+                type="button"
+                onClick={() => onPage(i)}
+                aria-current={isActive ? "page" : undefined}
+                className={`relative flex h-11 w-11 items-center justify-center font-display text-sm font-bold tabular-nums transition-colors duration-300 ${
+                  isActive ? "text-white" : "text-text-tertiary hover:text-white"
+                }`}
+              >
+                {String(i + 1).padStart(2, "0")}
+                {isActive && (
+                  <motion.span
+                    layoutId="gallery-page"
+                    transition={{ duration: 0.45, ease: EASE_OUT }}
+                    className="absolute inset-x-2.5 bottom-1.5 h-[2px] bg-[var(--accent-amber)]"
+                  />
+                )}
+              </button>
+            </li>
+          );
+        })}
+      </ol>
+      {arrow(1)}
+    </nav>
+  );
+}
 
 function CategoryDropdown({
   active,
@@ -247,7 +311,9 @@ function Lightbox({
 
 export default function Gallery() {
   const sectionRef = useRef<HTMLElement>(null);
+  const controlsRef = useRef<HTMLDivElement>(null);
   const [activeCategory, setActiveCategory] = useState<string>("All");
+  const [page, setPage] = useState(0);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   const counts = useMemo(() => {
@@ -265,6 +331,34 @@ export default function Gallery() {
         : GALLERY_IMAGES.filter((image) => image.category === activeCategory),
     [activeCategory]
   );
+
+  const pages = Math.ceil(images.length / PAGE_SIZE);
+  const offset = page * PAGE_SIZE;
+  const pageImages = images.slice(offset, offset + PAGE_SIZE);
+
+  const selectCategory = useCallback((category: string) => {
+    setActiveCategory(category);
+    setPage(0);
+  }, []);
+
+  const goToPage = useCallback((next: number) => {
+    setPage(next);
+    const controls = controlsRef.current;
+    if (!controls) return;
+    const top = controls.getBoundingClientRect().top + window.scrollY - 110;
+    if (window.scrollY > top) window.scrollTo({ top });
+  }, []);
+
+  // Stepping through the lightbox can cross a page boundary; follow it.
+  useEffect(() => {
+    if (lightboxIndex !== null) setPage(Math.floor(lightboxIndex / PAGE_SIZE));
+  }, [lightboxIndex]);
+
+  // The grid's height changes with the page, so every trigger below it moves.
+  useEffect(() => {
+    const id = setTimeout(() => ScrollTrigger.refresh(), 700);
+    return () => clearTimeout(id);
+  }, [activeCategory, page]);
 
   const step = useCallback(
     (delta: number) =>
@@ -320,8 +414,8 @@ export default function Gallery() {
         {/* GSAP's from() leaves an inline transform here, which makes this a
             stacking context - without an explicit z-index above the wall, the
             open dropdown is painted behind the tiles. */}
-        <div className="gallery-controls relative z-30 mb-12 flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
-          <CategoryDropdown active={activeCategory} counts={counts} onSelect={setActiveCategory} />
+        <div ref={controlsRef} className="gallery-controls relative z-30 mb-12 flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+          <CategoryDropdown active={activeCategory} counts={counts} onSelect={selectCategory} />
 
           <div className="flex items-baseline gap-3">
             <motion.span
@@ -341,7 +435,7 @@ export default function Gallery() {
 
         <div className="relative z-0 columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-4 md:gap-5 [column-fill:_balance]">
           <AnimatePresence mode="popLayout">
-            {images.map((image, index) => (
+            {pageImages.map((image, index) => (
               <motion.button
                 type="button"
                 key={image.src}
@@ -354,7 +448,7 @@ export default function Gallery() {
                   ease: EASE_OUT,
                   delay: Math.min(index * 0.03, 0.4),
                 }}
-                onClick={() => setLightboxIndex(index)}
+                onClick={() => setLightboxIndex(offset + index)}
                 style={{ aspectRatio: `${image.width} / ${image.height}` }}
                 className="group relative mb-4 md:mb-5 block w-full break-inside-avoid overflow-hidden rounded-xl bg-white/[0.03] shadow-lg shadow-black/30 transition-shadow duration-500 hover:shadow-2xl hover:shadow-black/60"
               >
@@ -389,6 +483,8 @@ export default function Gallery() {
             ))}
           </AnimatePresence>
         </div>
+
+        <Pagination page={page} pages={pages} onPage={goToPage} />
       </div>
 
       <AnimatePresence>

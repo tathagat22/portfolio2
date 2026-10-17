@@ -276,7 +276,9 @@ html.lenis, html.lenis body {
 }
 
 .wall-stage:hover .wall-track,
-.wall-stage:focus-within .wall-track {
+.wall-stage:hover .wall-track-reverse,
+.wall-stage:focus-within .wall-track,
+.wall-stage:focus-within .wall-track-reverse {
   animation-play-state: paused;
 }
 

@@ -1,70 +1,73 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { AI_FILMS, AI_TOOLS_TICKER } from "@/lib/utils/constants";
 
 type Film = (typeof AI_FILMS)[number];
 
-/* The wall is one screen, tiled edge to edge. Placement is explicit so the
-   mosaic never leaves a hole: 4x6 on phones, 8x4 from md up. Class strings are
-   written out in full because Tailwind only sees literals. */
-type Tile = { film: Film["id"]; cls: string };
-
-const TILES: Tile[] = [
+/* Two reels drifting in opposite directions. Each row holds every film in a
+   different order so the same two never sit stacked; the set is rendered twice
+   so translating by -50% loops seamlessly. */
+const ROWS: { order: Film["id"][]; track: string; duration: string }[] = [
   {
-    film: "krishna",
-    cls: "col-start-1 col-span-2 row-start-1 row-span-3 md:col-start-1 md:col-span-2 md:row-start-1 md:row-span-4",
+    order: ["krishna", "devi", "theatre", "academy", "madman", "qubit", "aispot", "robot"],
+    track: "wall-track",
+    duration: "150s",
   },
   {
-    film: "devi",
-    cls: "col-start-3 col-span-2 row-start-1 row-span-2 md:col-start-3 md:col-span-4 md:row-start-1 md:row-span-2",
-  },
-  {
-    film: "madman",
-    cls: "col-start-3 col-span-2 row-start-3 row-span-2 md:col-start-7 md:col-span-1 md:row-start-1 md:row-span-2",
-  },
-  {
-    film: "aispot",
-    cls: "hidden md:block md:col-start-8 md:col-span-1 md:row-start-1 md:row-span-2",
-  },
-  {
-    film: "robot",
-    cls: "col-start-1 col-span-2 row-start-4 row-span-3 md:col-start-3 md:col-span-3 md:row-start-3 md:row-span-2",
-  },
-  {
-    film: "aispot",
-    cls: "col-start-3 col-span-2 row-start-5 row-span-2 md:col-start-6 md:col-span-1 md:row-start-3 md:row-span-2",
-  },
-  {
-    film: "devi",
-    cls: "hidden md:block md:col-start-7 md:col-span-2 md:row-start-3 md:row-span-2",
+    order: ["academy", "aispot", "robot", "madman", "qubit", "krishna", "devi", "theatre"],
+    track: "wall-track-reverse",
+    duration: "170s",
   },
 ];
 
 function WallTile({
   film,
-  cls,
   delay,
+  clone,
   onOpen,
-  registerVideo,
 }: {
   film: Film;
-  cls: string;
   delay: string;
+  clone: boolean;
   onOpen: (film: Film) => void;
-  registerVideo: (el: HTMLVideoElement | null) => void;
 }) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  /* Only the panels actually crossing the screen decode — the reels hold
+     thirty-odd videos, but a handful are ever visible at once. */
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          if (video.preload === "none") video.preload = "auto";
+          video.play().catch(() => {});
+        } else {
+          video.pause();
+        }
+      },
+      { rootMargin: "200px 300px" }
+    );
+    observer.observe(video);
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <button
       type="button"
       onClick={() => onOpen(film)}
       aria-label={`Play ${film.title} — ${film.kind}`}
-      className={`group/tile relative overflow-hidden bg-black outline-none transition-opacity duration-500 group-hover/wall:opacity-45 hover:!opacity-100 focus-visible:!opacity-100 ${cls}`}
+      aria-hidden={clone || undefined}
+      tabIndex={clone ? -1 : undefined}
+      style={{ aspectRatio: `${film.width} / ${film.height}` }}
+      className="group/tile relative h-full shrink-0 overflow-hidden bg-black outline-none transition-opacity duration-500 group-hover/wall:opacity-45 hover:!opacity-100 focus-visible:!opacity-100"
     >
       <video
-        ref={registerVideo}
+        ref={videoRef}
         muted
         loop
         playsInline
@@ -98,44 +101,12 @@ function WallTile({
 }
 
 export default function AIFilmWall() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const videosRef = useRef<HTMLVideoElement[]>([]);
   const [active, setActive] = useState<Film | null>(null);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => setMounted(true), []);
 
   const byId = useMemo(() => new Map(AI_FILMS.map((f) => [f.id, f])), []);
-
-  const registerVideo = useCallback((el: HTMLVideoElement | null) => {
-    if (el && !videosRef.current.includes(el)) videosRef.current.push(el);
-  }, []);
-
-  /* Seven simultaneous decodes is only reasonable while the wall is on screen —
-     nothing downloads or plays until it is close. */
-  useEffect(() => {
-    const section = sectionRef.current;
-    if (!section) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        videosRef.current.forEach((video) => {
-          // two panels are md-only; skip their decode entirely on phones
-          const hidden = video.offsetParent === null;
-          if (entry.isIntersecting && !hidden) {
-            if (video.preload === "none") video.preload = "auto";
-            video.play().catch(() => {});
-          } else {
-            video.pause();
-          }
-        });
-      },
-      { rootMargin: "300px 0px" }
-    );
-
-    observer.observe(section);
-    return () => observer.disconnect();
-  }, []);
 
   // The lightbox is the only place these films are heard.
   useEffect(() => {
@@ -153,25 +124,31 @@ export default function AIFilmWall() {
 
   return (
     <section
-      ref={sectionRef}
       id="ai-films"
       data-theme="ai"
       className="relative z-[60] h-[100svh] min-h-[620px] w-full overflow-hidden bg-black"
     >
-      {/* The wall */}
-      <div className="group/wall absolute inset-0 grid grid-cols-4 grid-rows-6 gap-[3px] md:grid-cols-8 md:grid-rows-4">
-        {TILES.map((tile, i) => {
-          const film = byId.get(tile.film);
-          if (!film) return null;
+      {/* The wall — two reels, paused while the pointer is on them */}
+      <div className="wall-stage group/wall absolute inset-0 flex flex-col gap-[3px]">
+        {ROWS.map((row, r) => {
+          const films = row.order.map((id) => byId.get(id)).filter((f): f is Film => !!f);
           return (
-            <WallTile
-              key={`${tile.film}-${i}`}
-              film={film}
-              cls={tile.cls}
-              delay={`${i * -3.4}s`}
-              onOpen={setActive}
-              registerVideo={registerVideo}
-            />
+            <div key={r} className="min-h-0 flex-1 overflow-hidden">
+              <div
+                className={`${row.track} flex h-full w-max gap-[3px] pr-[3px]`}
+                style={{ ["--wall-duration" as string]: row.duration }}
+              >
+                {[...films, ...films].map((film, i) => (
+                  <WallTile
+                    key={`${film.id}-${i}`}
+                    film={film}
+                    delay={`${(i + r * 4) * -3.4}s`}
+                    clone={i >= films.length}
+                    onOpen={setActive}
+                  />
+                ))}
+              </div>
+            </div>
           );
         })}
       </div>
